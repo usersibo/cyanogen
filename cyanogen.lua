@@ -228,7 +228,7 @@ function Luxt1.CreateWindow(libName, logoId)
     shadow.Size = UDim2.new(0, 609, 0, 530)
     shadow.ZIndex = 0
     shadow.Image = "http://www.roblox.com/asset/?id=6105530152"
-    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageColor3 = Color3.fromRGB(9, 9, 9)
     shadow.ImageTransparency = 0.600
 
     local TabHandling = {}
