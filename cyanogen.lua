@@ -20,54 +20,111 @@ function Luxt1.CreateWindow(libName, logoId)
     local pageFolder = Instance.new("Folder")
 
     local key1 = Instance.new("TextButton")
-    local UICorner_key1 = Instance.new("UICorner")
+    local UICorner = Instance.new("UICorner")
     local keybindInfo1 = Instance.new("TextLabel")
 
-    -- Локальные переменные для KeyBind
+    key1.Name = "key1"
+    key1.Parent = sideHeading
+    key1.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+    key1.Position = UDim2.new(0.0508064516, 0, 0.935261786, 0)
+    key1.Size = UDim2.new(0, 76, 0, 22)
+    key1.ZIndex = 2
+    key1.Font = Enum.Font.GothamSemibold
+    key1.Text = "LeftAlt"
+    key1.TextColor3 = Color3.fromRGB(153, 255, 238)
+    key1.TextSize = 14.000
+
     local oldKey = Enum.KeyCode.LeftAlt.Name
 
-    -- Настройка библиотеки
+    key1.MouseButton1Click:connect(function(e) 
+        key1.Text = ". . ."
+        local a, b = game:GetService('UserInputService').InputBegan:wait();
+        if a.KeyCode.Name ~= "Unknown" then
+            key1.Text = a.KeyCode.Name
+            oldKey = a.KeyCode.Name;
+        end
+    end)
+
+    game:GetService("UserInputService").InputBegan:connect(function(current, ok) 
+        if not ok then 
+            if current.KeyCode.Name == oldKey then 
+                if LuxtLib.Enabled == true then
+                    LuxtLib.Enabled = false
+                else
+                    LuxtLib.Enabled = true
+                end
+            end
+        end
+    end)
+
+    UICorner.CornerRadius = UDim.new(0, 5)
+    UICorner.Parent = key1
+
+    keybindInfo1.Name = "keybindInfo"
+    keybindInfo1.Parent = sideHeading
+    keybindInfo1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    keybindInfo1.BackgroundTransparency = 1.000
+    keybindInfo1.Position = UDim2.new(0.585064113, 0, 0.935261846, 0)
+    keybindInfo1.Size = UDim2.new(0, 50, 0, 22)
+    keybindInfo1.ZIndex = 2
+    keybindInfo1.Font = Enum.Font.GothamSemibold
+    keybindInfo1.Text = "Close"
+    keybindInfo1.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keybindInfo1.TextSize = 13.000
+    keybindInfo1.TextXAlignment = Enum.TextXAlignment.Left
+
+    local UserInputService = game:GetService("UserInputService")
+
+    local TopBar = sideHeading
+
+    local Camera = workspace:WaitForChild("Camera")
+
+    local DragMousePosition
+    local FramePosition
+    local Draggable = false
+    TopBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            Draggable = true
+            DragMousePosition = Vector2.new(input.Position.X, input.Position.Y)
+            FramePosition = Vector2.new(shadow.Position.X.Scale, shadow.Position.Y.Scale)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if Draggable == true then
+            local NewPosition = FramePosition + ((Vector2.new(input.Position.X, input.Position.Y) - DragMousePosition) / Camera.ViewportSize)
+            shadow.Position = UDim2.new(NewPosition.X, 0, NewPosition.Y, 0)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            Draggable = false
+        end
+    end)
+
+    pageFolder.Name = "pageFolder"
+    pageFolder.Parent = framesAll
+
+    --
     libName = libName or "LuxtLib"
     logoId = logoId or ""
+    --
 
     LuxtLib.Name = "LuxtLib"..libName
     LuxtLib.Parent = game.CoreGui
     LuxtLib.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    LuxtLib.ResetOnSpawn = false -- Библиотека остается после смерти
 
-    -- === ТЕНЬ (SHADOW) ===
-    -- Создаем тень отдельно с мягкими краями
-    shadow.Name = "shadow"
-    shadow.Parent = LuxtLib
-    shadow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    shadow.BackgroundTransparency = 1.000
-    shadow.Position = UDim2.new(0.319562584, 0, 0.168689325, 0)
-    shadow.Size = UDim2.new(0, 609, 0, 530)
-    shadow.ZIndex = 0
-    shadow.Image = "http://www.roblox.com/asset/?id=6105530152"
-    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-    shadow.ImageTransparency = 0.600 -- Премиальная прозрачность
-    shadow.ScaleType = Enum.ScaleType.Tile -- Плавное растягивание
-    shadow.TileSize = UDim2.new(1, 0, 1, 0)
-    -- =====================
-
-    -- === ГЛАВНЫЙ ФРЕЙМ (MAINFRAME) ===
     MainFrame.Name = "MainFrame"
-    MainFrame.Parent = LuxtLib
+    MainFrame.Parent = shadow
     MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    MainFrame.Position = UDim2.new(0.048, 0, 0.075, 0)
+    MainFrame.Position = UDim2.new(0.048, 0,0.075, 0)
     MainFrame.Size = UDim2.new(0, 553, 0, 452)
-    MainFrame.ZIndex = 1
-    MainFrame.Active = true
-    MainFrame.Draggable = false -- Мы используем свой кастомный драг
-    -- =================================
 
     sideHeading.Name = "sideHeading"
     sideHeading.Parent = MainFrame
     sideHeading.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
     sideHeading.Size = UDim2.new(0, 155, 0, 452)
     sideHeading.ZIndex = 2
-    sideHeading.BorderSizePixel = 0
 
     MainCorner.CornerRadius = UDim.new(0, 5)
     MainCorner.Name = "MainCorner"
@@ -163,90 +220,16 @@ function Luxt1.CreateWindow(libName, logoId)
     framesAll.Size = UDim2.new(0, 381, 0, 431)
     framesAll.ZIndex = 2
 
-    pageFolder.Name = "pageFolder"
-    pageFolder.Parent = framesAll
-
-    -- === КНОПКА УПРАВЛЕНИЯ (KEYBIND) ===
-    key1.Name = "key1"
-    key1.Parent = sideHeading
-    key1.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
-    key1.Position = UDim2.new(0.0508064516, 0, 0.935261786, 0)
-    key1.Size = UDim2.new(0, 76, 0, 22)
-    key1.ZIndex = 2
-    key1.Font = Enum.Font.GothamSemibold
-    key1.Text = oldKey
-    key1.TextColor3 = Color3.fromRGB(153, 255, 238)
-    key1.TextSize = 14.000
-
-    key1.MouseButton1Click:connect(function(e) 
-        key1.Text = ". . ."
-        local a, b = game:GetService('UserInputService').InputBegan:wait();
-        if a.KeyCode.Name ~= "Unknown" then
-            key1.Text = a.KeyCode.Name
-            oldKey = a.KeyCode.Name;
-        end
-    end)
-
-    UICorner_key1.CornerRadius = UDim.new(0, 5)
-    UICorner_key1.Parent = key1
-
-    keybindInfo1.Name = "keybindInfo"
-    keybindInfo1.Parent = sideHeading
-    keybindInfo1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    keybindInfo1.BackgroundTransparency = 1.000
-    keybindInfo1.Position = UDim2.new(0.585064113, 0, 0.935261846, 0)
-    keybindInfo1.Size = UDim2.new(0, 50, 0, 22)
-    keybindInfo1.ZIndex = 2
-    keybindInfo1.Font = Enum.Font.GothamSemibold
-    keybindInfo1.Text = "Close"
-    keybindInfo1.TextColor3 = Color3.fromRGB(255, 255, 255)
-    keybindInfo1.TextSize = 13.000
-    keybindInfo1.TextXAlignment = Enum.TextXAlignment.Left
-    -- ====================================
-
-    local UserInputService = game:GetService("UserInputService")
-
-    local TopBar = sideHeading
-
-    local Camera = workspace:WaitForChild("Camera")
-
-    local DragMousePosition
-    local FramePosition
-    local Draggable = false
-    
-    -- Custom Drag Logic
-    TopBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            Draggable = true
-            DragMousePosition = Vector2.new(input.Position.X, input.Position.Y)
-            FramePosition = Vector2.new(shadow.Position.X.Scale, shadow.Position.Y.Scale)
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if Draggable == true then
-            local NewPosition = FramePosition + ((Vector2.new(input.Position.X, input.Position.Y) - DragMousePosition) / Camera.ViewportSize)
-            shadow.Position = UDim2.new(NewPosition.X, 0, NewPosition.Y, 0)
-            -- Синхронизируем MainFrame с тенью
-            MainFrame.Position = UDim2.new(NewPosition.X + 0.048, 0, NewPosition.Y + 0.075, 0) 
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            Draggable = false
-        end
-    end)
-
-    -- Toggle UI
-    UserInputService.InputBegan:connect(function(current, ok) 
-        if not ok then 
-            if current.KeyCode.Name == oldKey then 
-                LuxtLib.Enabled = not LuxtLib.Enabled
-            end
-        end
-    end)
-
+    shadow.Name = "shadow"
+    shadow.Parent = LuxtLib
+    shadow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    shadow.BackgroundTransparency = 1.000
+    shadow.Position = UDim2.new(0.319562584, 0, 0.168689325, 0)
+    shadow.Size = UDim2.new(0, 609, 0, 530)
+    shadow.ZIndex = 0
+    shadow.Image = "http://www.roblox.com/asset/?id=6105530152"
+    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.200
 
     local TabHandling = {}
 
@@ -255,6 +238,7 @@ function Luxt1.CreateWindow(libName, logoId)
         local tabBtn = Instance.new("TextButton")
         local tabLogo = Instance.new("ImageLabel")
 
+        --
         tabText = tabText or "Tab"
         tabId = tabId or ""
 
@@ -288,6 +272,7 @@ function Luxt1.CreateWindow(libName, logoId)
         tabLogo.ZIndex = 2
         tabLogo.Image = "rbxassetid://"..tabId
         tabLogo.ImageColor3 = Color3.fromRGB(153, 255, 238)
+        --
 
         local newPage = Instance.new("ScrollingFrame")
         local sectionList = Instance.new("UIListLayout")
@@ -311,6 +296,7 @@ function Luxt1.CreateWindow(libName, logoId)
         
         local function UpdateSize()
             local cS = sectionList.AbsoluteContentSize
+
             game.TweenService:Create(newPage, TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {
                 CanvasSize = UDim2.new(0,cS.X,0,cS.Y)
             }):Play()
@@ -366,9 +352,10 @@ function Luxt1.CreateWindow(libName, logoId)
             sectionInnerList.HorizontalAlignment = Enum.HorizontalAlignment.Center
             sectionInnerList.SortOrder = Enum.SortOrder.LayoutOrder
             sectionInnerList.Padding = UDim.new(0, 3)
-            
+            --
             sectionText = sectionText or "Section"
             local isDropped = false
+            --
 
             sectionFrame.Name = "sectionFrame"
             sectionFrame.Parent = newPage
@@ -437,10 +424,12 @@ function Luxt1.CreateWindow(libName, logoId)
                 local ButtonFrame = Instance.new("Frame")
                 local TextButton = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
-                local UIListLayout_btn = Instance.new("UIListLayout")
+                local UIListLayout = Instance.new("UIListLayout")
 
+                --
                 btnText = btnText or "TextButton"
                 callback = callback or function() end
+                --
 
                 ButtonFrame.Name = "ButtonFrame"
                 ButtonFrame.Parent = sectionFrame
@@ -472,10 +461,10 @@ function Luxt1.CreateWindow(libName, logoId)
                 UICorner.CornerRadius = UDim.new(0, 3)
                 UICorner.Parent = TextButton
 
-                UIListLayout_btn.Parent = ButtonFrame
-                UIListLayout_btn.HorizontalAlignment = Enum.HorizontalAlignment.Center
-                UIListLayout_btn.SortOrder = Enum.SortOrder.LayoutOrder
-                UIListLayout_btn.VerticalAlignment = Enum.VerticalAlignment.Center
+                UIListLayout.Parent = ButtonFrame
+                UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
                 TextButton.MouseButton1Up:Connect(function()
                     TextButton:TweenSize(UDim2.new(0, 365,0, 36), "InOut", "Quint", 0.18, true)
@@ -522,7 +511,8 @@ function Luxt1.CreateWindow(libName, logoId)
                     local togInList = Instance.new("UIListLayout")
                     local toginPad = Instance.new("UIPadding")
                     local UIListLayout = Instance.new("UIListLayout")
-                    
+                    local a 
+                    --
                     toggInfo = toggInfo or "Toggle"
                     callback = callback or function() end
 
@@ -614,6 +604,7 @@ function Luxt1.CreateWindow(libName, logoId)
                 end
 
                     function ItemHandling:KeyBind(keyInfo, first, callback)
+                        --
                         keyInfo = keyInfo or "KeyBind"
                         local oldKey = first.Name
                         callback = callback or function() end
@@ -715,10 +706,12 @@ function Luxt1.CreateWindow(libName, logoId)
                     end
 
                         function ItemHandling:TextBox(infbix, textPlace, callback)
+                            --
                             infbix = infbix or "TextBox"
                             textPlace = textPlace or "PlaceHolder"
                             callback = callback or function() end
-                            
+                            --
+                            local a
                             local TextBoxFrame = Instance.new("Frame")
                             local textboxFrame = Instance.new("Frame")
                             local UICorner = Instance.new("UICorner")
@@ -827,10 +820,11 @@ function Luxt1.CreateWindow(libName, logoId)
                                 local sliderlist = Instance.new("UIListLayout")
                                 local UIListLayout = Instance.new("UIListLayout")
                                 local sliderInfo = Instance.new("TextLabel")
-                                
+                                --
                                 slidInfo = slidInfo or "Slider"
                                 minvalue = minvalue or 0
                                 maxvalue = maxvalue or 500
+                                ---
 
                                 SliderFrame.Name = "SliderFrame"
                                 SliderFrame.Parent = sectionFrame
@@ -1174,10 +1168,10 @@ function Luxt1.CreateWindow(libName, logoId)
                                     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
                                     UIListLayout.Padding = UDim.new(0, 3)
 
-                                    -- Fixed: Reference to undefined variable removed/ignored safely
-                                    if UIListLayout_2 then 
-                                        UIListLayout_2.Parent = nil -- Safety check to prevent error
-                                    end
+                                    UIListLayout_2.Parent = optionBtnFrame
+                                    UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                                    UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+                                    UIListLayout_2.VerticalAlignment = Enum.VerticalAlignment.Center
 
                                     UIListLayout_3.Parent = DropDownFrame
                                     UIListLayout_3.FillDirection = Enum.FillDirection.Horizontal
@@ -1218,7 +1212,7 @@ function Luxt1.CreateWindow(libName, logoId)
                                             dropdownItem1.Text = v
                                             DropDownFrame:TweenSize(UDim2.new(0, 365, 0, 36), "In", "Quint", 0.10)
                                             wait()
-                                            isDropped1 = false -- Fixed: isDropped -> isDropped1
+                                            isDropped = false
                                             wait(0.10)
                                             sectionFrame:TweenSize(UDim2.new(1,0, 0, sectionInnerList.AbsoluteContentSize.Y + 5), "In", "Quint", 0.10)
                                             wait(0.10)
@@ -1256,8 +1250,8 @@ function Luxt1.CreateWindow(libName, logoId)
                                                 TextColor3 = Color3.fromRGB(120, 200, 187)
                                             }):Play()
                                         end)
-                                    end
                                 end
+                            end
                         
             return ItemHandling
         end
