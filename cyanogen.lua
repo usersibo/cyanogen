@@ -1258,13 +1258,12 @@ function Luxt1.CreateWindow(libName, logoId)
         return sectionHandling
     end
     return TabHandling
-end
-
-task.spawn(function()
+    task.spawn(function()
     task.wait(0.1)
     if hubLogo then
         hubLogo.Image = "rbxthumb://type=AvatarHeadShot&id=" .. game.Players.LocalPlayer.UserId .. "&w=150&h=150"
     end
 end)
+end
 return Luxt1
 
