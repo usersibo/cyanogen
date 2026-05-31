@@ -143,7 +143,25 @@ function Luxt1.CreateWindow(libName, logoId)
     hubLogo.Position = UDim2.new(0.0567928664, 0, 0.0243411884, 0)
     hubLogo.Size = UDim2.new(0, 30, 0, 30)
     hubLogo.ZIndex = 2
-    hubLogo.Image = "rbxassetid://"..logoId
+    local localPlayer = game.Players.LocalPlayer
+local userId = localPlayer.UserId
+
+hubLogo.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userId .. "&w=150&h=150"
+
+task.spawn(function()
+    local ok, thumb = pcall(function()
+        return game:GetService("Players"):GetUserThumbnailAsync(
+            userId,
+            Enum.ThumbnailType.HeadShot,
+            Enum.ThumbnailSize.Size150x150
+        )
+    end)
+    if ok and thumb then
+        hubLogo.Image = thumb
+    elseif logoId and logoId ~= "" then
+        hubLogo.Image = "rbxassetid://" .. logoId
+    end
+end)
 
     MainCorner_2.CornerRadius = UDim.new(0, 999)
     MainCorner_2.Name = "MainCorner"
