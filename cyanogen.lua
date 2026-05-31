@@ -410,7 +410,7 @@ function Luxt1.CreateWindow(libName, logoId)
  tabLogo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
  tabLogo.BackgroundTransparency = 1.000
  tabLogo.BorderSizePixel = 0
- tabLogo.Size = UDim2.new(0, 20, 0, 20)
+ tabLogo.Size = UDim2.new(0, 18, 0, 18)
  tabLogo.ZIndex = 2
  tabLogo.Image = "rbxassetid://"..tabId
  tabLogo.ImageColor3 = TabInactiveCol
