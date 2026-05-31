@@ -110,7 +110,9 @@ function Luxt1.CreateWindow(libName, logoId)
  local TextDim = Color3.fromRGB(180, 180, 180)
  local TabInactiveCol = Color3.fromRGB(90, 90, 90)
 
+ local rippleDisabled = false
  local function ripple(btn, accent)
+  if rippleDisabled then return end
   Luxt1.AttachRipple(btn, accent or T.Accent)
  end
 
@@ -158,11 +160,11 @@ function Luxt1.CreateWindow(libName, logoId)
  key1.Size = UDim2.new(0, 76, 0, 22)
  key1.ZIndex = 2
  key1.Font = Enum.Font.GothamSemibold
- key1.Text = "LeftAlt"
+ key1.Text = "F1"
  key1.TextColor3 = T.KeyText
  key1.TextSize = 14.000
 
- local oldKey = Enum.KeyCode.LeftAlt.Name
+ local oldKey = Enum.KeyCode.F1.Name
 
  key1.MouseButton1Click:connect(function(e) 
  key1.Text = ". . ."
@@ -1642,6 +1644,8 @@ function Luxt1.CreateWindow(libName, logoId)
  callback = callback or function() end
  list = list or {}
  dropInfo = dropInfo or ""
+
+ rippleDisabled = true
  
  local isDropped1 = false
  local DropDownFrame = Instance.new("Frame")
@@ -1798,22 +1802,7 @@ function Luxt1.CreateWindow(libName, logoId)
  Rotation = 0
  }):Play()
  end)
- optionBtn1.MouseButton1Down:Connect(function()
- optionBtn1:TweenSize(UDim2.new(0, 335,0, 30), "InOut", "Quint", 0.12, true)
- game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
- BackgroundColor3 = Color3.fromRGB(21,21,21),
- TextColor3 = Color3.fromRGB(180, 180, 180)
- }):Play()
- end)
- 
- optionBtn1.MouseButton1Up:Connect(function()
- optionBtn1:TweenSize(UDim2.new(0, 339,0, 34), "InOut", "Quint", 0.12, true)
- game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
- BackgroundColor3 = T.ButtonPress,
- TextColor3 = Color3.fromRGB(0,0,0)
- }):Play()
- end)
- 
+
  optionBtn1.MouseEnter:Connect(function()
  game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
  BackgroundColor3 = Color3.fromRGB(15, 15, 15),
@@ -1828,6 +1817,8 @@ function Luxt1.CreateWindow(libName, logoId)
  }):Play()
  end)
  end
+
+ rippleDisabled = false
  end
  
  return ItemHandling
