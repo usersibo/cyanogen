@@ -63,6 +63,7 @@ function Luxt1.CreateWindow(libName, logoId)
  end
 
  local wave
+ local waveTint
  local hubName
  local usename
  local key1
@@ -75,11 +76,22 @@ function Luxt1.CreateWindow(libName, logoId)
   if not Luxt1.Themes[themeName] then return end
   currentThemeName = themeName
   T = Luxt1.GetTheme(themeName)
+  if waveTint then waveTint.BackgroundColor3 = T.Wave end
   if wave then
+   wave.Image = "rbxassetid://6087537285"
    wave.ImageColor3 = T.Wave
-   wave.ImageTransparency = 0.35
+   wave.ImageTransparency = 0.4
   end
   if key1 then key1.TextColor3 = T.KeyText end
+  for _, data in pairs(tabRegistry) do
+   if data.active then
+    data.btn.TextColor3 = T.Accent
+    if data.logo then data.logo.ImageColor3 = T.Accent end
+   else
+    data.btn.TextColor3 = TabInactiveCol
+    if data.logo then data.logo.ImageColor3 = TabInactiveCol end
+   end
+  end
   for _, fn in ipairs(themeUpdaters) do pcall(fn, T) end
  end
 
@@ -96,7 +108,6 @@ function Luxt1.CreateWindow(libName, logoId)
  local UIListLayout = Instance.new("UIListLayout")
  usename = Instance.new("TextLabel")
  local MainCorner_3 = Instance.new("UICorner")
- wave = Instance.new("ImageLabel")
  local MainCorner_4 = Instance.new("UICorner")
  local framesAll = Instance.new("Frame")
  local pageFolder = Instance.new("Folder")
@@ -305,16 +316,30 @@ function Luxt1.CreateWindow(libName, logoId)
  MainCorner_3.Name = "MainCorner"
  MainCorner_3.Parent = MainFrame
 
+ waveTint = Instance.new("Frame")
+ waveTint.Name = "waveTint"
+ waveTint.Parent = MainFrame
+ waveTint.BorderSizePixel = 0
+ waveTint.Position = UDim2.new(0.0213434305, 0, 0, 0)
+ waveTint.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
+ waveTint.BackgroundColor3 = T.Wave
+ waveTint.BackgroundTransparency = 0.88
+ waveTint.ZIndex = 0
+
+ local waveTintCorner = Instance.new("UICorner")
+ waveTintCorner.CornerRadius = UDim.new(0, 3)
+ waveTintCorner.Parent = waveTint
+
+ wave = Instance.new("ImageLabel")
  wave.Name = "wave"
  wave.Parent = MainFrame
- wave.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
- wave.BackgroundTransparency = 1.000
+ wave.BackgroundTransparency = 1
  wave.Position = UDim2.new(0.0213434305, 0, 0, 0)
  wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
- wave.Image = "http://www.roblox.com/asset/?id=6087537285"
+ wave.Image = "rbxassetid://6087537285"
  wave.ImageColor3 = T.Wave
- wave.ImageTransparency = 0.35
- wave.ScaleType = Enum.ScaleType.Slice
+ wave.ImageTransparency = 0.4
+ wave.ScaleType = Enum.ScaleType.Fit
  wave.ZIndex = 1
 
  MainCorner_4.CornerRadius = UDim.new(0, 3)
@@ -442,10 +467,10 @@ function Luxt1.CreateWindow(libName, logoId)
  for _, data in pairs(tabRegistry) do data.active = false end
  tabRegistry[tabBtn].active = true
  game.TweenService:Create(tabLogo, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- ImageColor3 = TextWhite
+ ImageColor3 = T.Accent
  }):Play()
  game.TweenService:Create(tabBtn, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- TextColor3 = TextWhite
+ TextColor3 = T.Accent
  }):Play()
  end)
 
@@ -1678,8 +1703,13 @@ function Luxt1.CreateWindow(libName, logoId)
  dropdownItem1.TextSize = 14.000
  dropdownItem1.TextXAlignment = Enum.TextXAlignment.Left
 
+ local dropdownOptionBtns = {}
+
  addThemeUpdater(function(theme)
   expand_more.ImageColor3 = theme.Accent
+  for _, btn in ipairs(dropdownOptionBtns) do
+   btn.TextColor3 = theme.AccentMuted
+  end
  end)
 
  UIListLayout.Parent = dropdownFrame
@@ -1721,7 +1751,8 @@ function Luxt1.CreateWindow(libName, logoId)
  optionBtn1.TextColor3 = T.AccentMuted
  optionBtn1.TextSize = 14.000
  optionBtn1.TextXAlignment = Enum.TextXAlignment.Left
- 
+ table.insert(dropdownOptionBtns, optionBtn1)
+
  UICorner_3.CornerRadius = UDim.new(0, 3)
  UICorner_3.Parent = optionBtn1
 
@@ -1766,7 +1797,7 @@ function Luxt1.CreateWindow(libName, logoId)
  optionBtn1.MouseLeave:Connect(function()
  game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
  BackgroundColor3 = Color3.fromRGB(21, 21, 21),
- TextColor3 = Color3.fromRGB(120, 200, 187)
+ TextColor3 = T.AccentMuted
  }):Play()
  end)
  end
