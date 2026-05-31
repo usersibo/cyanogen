@@ -89,140 +89,6 @@ function Luxt1.AttachRipple(button, accentColor)
  end)
 end
 
-function Luxt1.OpenKeySystem(options)
- options = options or {}
- local title = options.title or "Key System"
- local placeholder = options.placeholder or "Enter key..."
- local textBtnLabel = options.textBtn or "Use text"
- local mainBtnLabel = options.mainBtn or "Submit"
- local validate = options.validate or function() return true end
- local onTextClick = options.onTextClick or function() end
- local onSubmit = options.onSubmit or function() end
- local onClose = options.onClose or function() end
- local themeName = options.theme or Luxt1.DefaultTheme
- local T = Luxt1.GetTheme(themeName)
-
- local gui = Instance.new("ScreenGui")
- gui.Name = "LuxtKeySystem"
- gui.ResetOnSpawn = false
- gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
- gui.Parent = game.CoreGui
-
- local overlay = Instance.new("TextButton")
- overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
- overlay.BackgroundTransparency = 0.45
- overlay.Size = UDim2.new(1, 0, 1, 0)
- overlay.Text = ""
- overlay.AutoButtonColor = false
- overlay.Parent = gui
-
- local box = Instance.new("Frame")
- box.Parent = gui
- box.AnchorPoint = Vector2.new(0.5, 0.5)
- box.Position = UDim2.new(0.5, 0, 0.5, 0)
- box.Size = UDim2.new(0, 340, 0, 220)
- box.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
- local boxC = Instance.new("UICorner")
- boxC.CornerRadius = UDim.new(0, 8)
- boxC.Parent = box
-
- local titleLbl = Instance.new("TextLabel")
- titleLbl.Parent = box
- titleLbl.BackgroundTransparency = 1
- titleLbl.Size = UDim2.new(1, -20, 0, 32)
- titleLbl.Position = UDim2.new(0, 10, 0, 8)
- titleLbl.Font = Enum.Font.GothamSemibold
- titleLbl.Text = title
- titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
- titleLbl.TextSize = 16
- titleLbl.TextXAlignment = Enum.TextXAlignment.Left
-
- local inputWrap = Instance.new("Frame")
- inputWrap.Parent = box
- inputWrap.BackgroundTransparency = 1
- inputWrap.Position = UDim2.new(0.05, 0, 0, 48)
- inputWrap.Size = UDim2.new(0.9, 0, 0, 32)
-
- local lineInput = Instance.new("TextBox")
- lineInput.Parent = inputWrap
- lineInput.BackgroundTransparency = 1
- lineInput.Size = UDim2.new(1, 0, 1, -6)
- lineInput.Font = Enum.Font.GothamSemibold
- lineInput.PlaceholderText = placeholder
- lineInput.PlaceholderColor3 = Color3.fromRGB(140, 140, 140)
- lineInput.Text = ""
- lineInput.TextColor3 = Color3.fromRGB(255, 255, 255)
- lineInput.TextSize = 14
- lineInput.ClearTextOnFocus = false
- lineInput.TextXAlignment = Enum.TextXAlignment.Left
-
- local underline = Instance.new("Frame")
- underline.Name = "underline"
- underline.Parent = inputWrap
- underline.BorderSizePixel = 0
- underline.BackgroundColor3 = T.Accent
- underline.Position = UDim2.new(0, 0, 1, -2)
- underline.Size = UDim2.new(1, 0, 0, 2)
-
- lineInput.Focused:Connect(function()
-  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 3), BackgroundColor3 = T.Accent}):Play()
- end)
- lineInput.FocusLost:Connect(function()
-  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 2)}):Play()
- end)
-
- local textAction = Instance.new("TextButton")
- textAction.Parent = box
- textAction.BackgroundTransparency = 1
- textAction.Position = UDim2.new(0.05, 0, 0, 92)
- textAction.Size = UDim2.new(0.9, 0, 0, 24)
- textAction.Font = Enum.Font.GothamSemibold
- textAction.Text = textBtnLabel
- textAction.TextColor3 = T.Accent
- textAction.TextSize = 14
- Luxt1.AttachRipple(textAction, T.Accent)
-
- local mainBtn = Instance.new("TextButton")
- mainBtn.Parent = box
- mainBtn.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
- mainBtn.Position = UDim2.new(0.05, 0, 0, 128)
- mainBtn.Size = UDim2.new(0.9, 0, 0, 36)
- mainBtn.Font = Enum.Font.GothamSemibold
- mainBtn.Text = mainBtnLabel
- mainBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
- mainBtn.TextSize = 14
- mainBtn.AutoButtonColor = false
- local mbC = Instance.new("UICorner")
- mbC.CornerRadius = UDim.new(0, 5)
- mbC.Parent = mainBtn
- Luxt1.AttachRipple(mainBtn, T.Accent)
-
- local function closeAll()
-  gui:Destroy()
-  onClose()
- end
-
- overlay.MouseButton1Click:Connect(closeAll)
-
- textAction.MouseButton1Click:Connect(function()
-  onTextClick(lineInput.Text)
- end)
-
- mainBtn.MouseButton1Click:Connect(function()
-  local txt = lineInput.Text
-  if validate(txt) then
-   onSubmit(txt)
-   closeAll()
-  end
- end)
-
- return {
-  Gui = gui,
-  GetText = function() return lineInput.Text end,
-  Close = closeAll,
- }
-end
-
 function Luxt1.CreateWindow(libName, logoId)
  libName = libName or "LuxtLib"
  logoId = logoId or ""
@@ -1864,8 +1730,6 @@ function Luxt1.CreateWindow(libName, logoId)
  dropdownItem1.TextSize = 14.000
  dropdownItem1.TextXAlignment = Enum.TextXAlignment.Left
 
- ripple(expand_more, T.Accent)
-
  local dropdownOptionBtns = {}
 
  addThemeUpdater(function(theme)
@@ -1918,7 +1782,6 @@ function Luxt1.CreateWindow(libName, logoId)
 
  UICorner_3.CornerRadius = UDim.new(0, 3)
  UICorner_3.Parent = optionBtn1
- ripple(optionBtn1, T.Accent)
 
  DropYSize = DropYSize + 40
  optionBtn1.MouseButton1Click:Connect(function()
@@ -1981,12 +1844,6 @@ function Luxt1.CreateWindow(libName, logoId)
 
  function TabHandling:GetThemeNames()
   return Luxt1.GetThemeNames()
- end
-
- function TabHandling:OpenKeySystem(options)
-  options = options or {}
-  options.theme = options.theme or currentThemeName
-  return Luxt1.OpenKeySystem(options)
  end
 
  return TabHandling
