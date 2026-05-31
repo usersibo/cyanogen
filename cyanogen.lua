@@ -23,10 +23,6 @@ function Luxt1.CreateWindow(libName, logoId)
     local UICorner = Instance.new("UICorner")
     local keybindInfo1 = Instance.new("TextLabel")
 
-    -- Получаем игрока и сервисы
-    local Players = game:GetService("Players")
-    local lplr = Players.LocalPlayer
-
     key1.Name = "key1"
     key1.Parent = sideHeading
     key1.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
@@ -147,20 +143,7 @@ function Luxt1.CreateWindow(libName, logoId)
     hubLogo.Position = UDim2.new(0.0567928664, 0, 0.0243411884, 0)
     hubLogo.Size = UDim2.new(0, 30, 0, 30)
     hubLogo.ZIndex = 2
-    
-    -- === ИСПРАВЛЕНИЕ АВАТАРА === --
-    -- Теперь мы ставим аватар игрока сюда, вместо logoId
-    local success, avatarImage = pcall(function()
-        return Players:GetUserThumbnailAsync(lplr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
-    end)
-    
-    if success then
-        hubLogo.Image = avatarImage
-    else
-        -- Фолбэк, если не получилось загрузить
-        hubLogo.Image = "rbxassetid://"..(logoId ~= "" and logoId or "6842817309") 
-    end
-    -- ============================== --
+    hubLogo.Image = "rbxassetid://"..logoId
 
     MainCorner_2.CornerRadius = UDim.new(0, 999)
     MainCorner_2.Name = "MainCorner"
@@ -203,7 +186,7 @@ function Luxt1.CreateWindow(libName, logoId)
     usename.Size = UDim2.new(0, 110, 0, 16)
     usename.ZIndex = 2
     usename.Font = Enum.Font.GothamSemibold
-    usename.Text = lplr.Name
+    usename.Text = game.Players.LocalPlayer.Name
     usename.TextColor3 = Color3.fromRGB(103, 172, 161)
     usename.TextSize = 12.000
     usename.TextWrapped = true
@@ -219,7 +202,7 @@ function Luxt1.CreateWindow(libName, logoId)
     wave.BackgroundTransparency = 1.000
     wave.Position = UDim2.new(0.0213434305, 0, 0, 0)
     wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
-    wave.Image = "rbxassetid://6087537285" -- Использован rbxassetid для совместимости
+    wave.Image = "http://www.roblox.com/asset/?id=6087537285"
     wave.ImageColor3 = Color3.fromRGB(181, 249, 255)
     wave.ImageTransparency = 0.300
     wave.ScaleType = Enum.ScaleType.Slice
@@ -244,7 +227,7 @@ function Luxt1.CreateWindow(libName, logoId)
     shadow.Position = UDim2.new(0.319562584, 0, 0.168689325, 0)
     shadow.Size = UDim2.new(0, 609, 0, 530)
     shadow.ZIndex = 0
-    shadow.Image = "rbxassetid://6105530152"
+    shadow.Image = "http://www.roblox.com/asset/?id=6105530152"
     shadow.ImageColor3 = Color3.fromRGB(9, 9, 9)
     shadow.ImageTransparency = 0.600
 
@@ -1088,7 +1071,188 @@ function Luxt1.CreateWindow(libName, logoId)
                                 UICorner.Parent = TextLabel
                             end
 
-                                
+                                function ItemHandling:DropDown(dropInfo, list, callback)
+                                    callback = callback or function() end
+                                    list = list or {}
+                                    dropInfo = dropInfo or ""
+        
+                                    local isDropped1 = false
+                                    local DropDownFrame = Instance.new("Frame")
+                                    local dropdownFrame = Instance.new("Frame")
+                                    local UICorner = Instance.new("UICorner")
+                                    local dropdownFrameMain = Instance.new("Frame")
+                                    local UICorner_2 = Instance.new("UICorner")
+                                    local expand_more = Instance.new("ImageButton")
+                                    local dropdownItem1 = Instance.new("TextLabel")
+                                    local UIListLayout = Instance.new("UIListLayout")
+                                    local UIListLayout_2 = Instance.new("UIListLayout")
+                                    local UIListLayout_3 = Instance.new("UIListLayout")
+
+                                    local DropYSize = 36
+
+                                    DropDownFrame.Name = "DropDownFrame"
+                                    DropDownFrame.Parent = sectionFrame
+                                    DropDownFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+                                    DropDownFrame.BackgroundTransparency = 1.000
+                                    DropDownFrame.Position = UDim2.new(0.0209973752, 0, 0.439849585, 0)
+                                    DropDownFrame.Size = UDim2.new(0, 365, 0, 36)
+                                    DropDownFrame.ClipsDescendants = true
+
+                                    dropdownFrame.Name = "dropdownFrame"
+                                    dropdownFrame.Parent = DropDownFrame
+                                    dropdownFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+                                    dropdownFrame.Size = UDim2.new(1, 0, 1, 0)
+                                    dropdownFrame.ZIndex = 2
+
+                                    UICorner.CornerRadius = UDim.new(0, 3)
+                                    UICorner.Parent = dropdownFrame
+
+                                    dropdownFrameMain.Name = "dropdownFrameMain"
+                                    dropdownFrameMain.Parent = dropdownFrame
+                                    dropdownFrameMain.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+                                    dropdownFrameMain.Size = UDim2.new(0, 365, 0, 36)
+                                    dropdownFrameMain.ZIndex = 2
+
+                                    UICorner_2.CornerRadius = UDim.new(0, 3)
+                                    UICorner_2.Parent = dropdownFrameMain
+
+                                    expand_more.Name = "expand_more"
+                                    expand_more.Parent = dropdownFrameMain
+                                    expand_more.BackgroundTransparency = 1.000
+                                    expand_more.Position = UDim2.new(0.91900003, 0, 0.138999999, 0)
+                                    expand_more.Size = UDim2.new(0, 25, 0, 25)
+                                    expand_more.ZIndex = 2
+                                    expand_more.Image = "rbxassetid://3926305904"
+                                    expand_more.ImageColor3 = Color3.fromRGB(153, 255, 238)
+                                    expand_more.ImageRectOffset = Vector2.new(564, 284)
+                                    expand_more.ImageRectSize = Vector2.new(36, 36)
+                                    expand_more.MouseButton1Click:Connect(function()
+                                        if isDropped1 then
+                                            isDropped1 = false
+                                            DropDownFrame:TweenSize(UDim2.new(0, 365, 0, 36), "In", "Quint", 0.10)
+                                            game.TweenService:Create(expand_more, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In),{
+                                                Rotation = 0
+                                            }):Play()
+                                            wait(0.10)
+                                            sectionFrame:TweenSize(UDim2.new(1,0, 0, sectionInnerList.AbsoluteContentSize.Y + 5), "In", "Quint", 0.10)
+                                            wait(0.10)
+                                            UpdateSize()
+                                        else
+                                            isDropped1 = true
+                                            DropDownFrame:TweenSize(UDim2.new(0, 365, 0, DropYSize), "In", "Quint", 0.10)
+                                            game.TweenService:Create(expand_more, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In),{
+                                                Rotation = 180
+                                            }):Play()
+                                            wait(0.10)
+                                            sectionFrame:TweenSize(UDim2.new(1,0, 0, sectionInnerList.AbsoluteContentSize.Y + 5), "In", "Quint", 0.10)
+                                            wait(0.10)
+                                            UpdateSize()
+                                        end
+                                    end)
+
+                                    dropdownItem1.Name = "dropdownItem1"
+                                    dropdownItem1.Parent = dropdownFrameMain
+                                    dropdownItem1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                    dropdownItem1.BackgroundTransparency = 1.000
+                                    dropdownItem1.Position = UDim2.new(0.0250000004, 0, 0.0833333358, 0)
+                                    dropdownItem1.Size = UDim2.new(0, 293, 0, 30)
+                                    dropdownItem1.ZIndex = 2
+                                    dropdownItem1.Font = Enum.Font.GothamSemibold
+                                    dropdownItem1.Text = dropInfo
+                                    dropdownItem1.TextColor3 = Color3.fromRGB(153, 255, 238)
+                                    dropdownItem1.TextSize = 14.000
+                                    dropdownItem1.TextXAlignment = Enum.TextXAlignment.Left
+
+                                    UIListLayout.Parent = dropdownFrame
+                                    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                                    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                                    UIListLayout.Padding = UDim.new(0, 3)
+
+                                    UIListLayout_2.Parent = optionBtnFrame
+                                    UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                                    UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+                                    UIListLayout_2.VerticalAlignment = Enum.VerticalAlignment.Center
+
+                                    UIListLayout_3.Parent = DropDownFrame
+                                    UIListLayout_3.FillDirection = Enum.FillDirection.Horizontal
+                                    UIListLayout_3.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                                    UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
+                                    UIListLayout_3.VerticalAlignment = Enum.VerticalAlignment.Center
+
+                                    for i,v in next, list do
+                                        local optionBtnFrame = Instance.new("Frame")
+                                        local optionBtn1 = Instance.new("TextButton")
+                                        local UICorner_3 = Instance.new("UICorner")
+
+                                        optionBtnFrame.Name = "optionBtnFrame"
+                                        optionBtnFrame.Parent = dropdownFrame
+                                        optionBtnFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                        optionBtnFrame.BackgroundTransparency = 1.000
+                                        optionBtnFrame.BorderSizePixel = 0
+                                        optionBtnFrame.Size = UDim2.new(0, 339, 0, 34)
+    
+                                        optionBtn1.Name = "optionBtn1"
+                                        optionBtn1.Parent = optionBtnFrame
+                                        optionBtn1.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
+                                        optionBtn1.Size = UDim2.new(0, 339, 0, 34)
+                                        optionBtn1.ZIndex = 2
+                                        optionBtn1.AutoButtonColor = false
+                                        optionBtn1.Font = Enum.Font.GothamSemibold
+                                        optionBtn1.Text = "  "..v
+                                        optionBtn1.TextColor3 = Color3.fromRGB(120, 200, 187)
+                                        optionBtn1.TextSize = 14.000
+                                        optionBtn1.TextXAlignment = Enum.TextXAlignment.Left
+    
+                                        UICorner_3.CornerRadius = UDim.new(0, 3)
+                                        UICorner_3.Parent = optionBtn1
+
+                                        DropYSize = DropYSize + 40
+                                        optionBtn1.MouseButton1Click:Connect(function()
+                                            callback(v)
+                                            dropdownItem1.Text = v
+                                            DropDownFrame:TweenSize(UDim2.new(0, 365, 0, 36), "In", "Quint", 0.10)
+                                            wait()
+                                            isDropped = false
+                                            wait(0.10)
+                                            sectionFrame:TweenSize(UDim2.new(1,0, 0, sectionInnerList.AbsoluteContentSize.Y + 5), "In", "Quint", 0.10)
+                                            wait(0.10)
+                                            UpdateSize()
+                                            game.TweenService:Create(expand_more, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In),{
+                                                Rotation = 0
+                                            }):Play()
+                                        end)
+                                        optionBtn1.MouseButton1Down:Connect(function()
+                                            optionBtn1:TweenSize(UDim2.new(0, 335,0, 30), "InOut", "Quint", 0.12, true)
+                                            game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
+                                                BackgroundColor3 = Color3.fromRGB(21,21,21),
+                                                TextColor3 = Color3.fromRGB(180, 180, 180)
+                                            }):Play()
+                                        end)
+                                        
+                                        optionBtn1.MouseButton1Up:Connect(function()
+                                            optionBtn1:TweenSize(UDim2.new(0, 339,0, 34), "InOut", "Quint", 0.12, true)
+                                            game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
+                                                BackgroundColor3 = Color3.fromRGB(101, 168, 157),
+                                                TextColor3 = Color3.fromRGB(0,0,0)
+                                            }):Play()
+                                        end)
+                                        
+                                        optionBtn1.MouseEnter:Connect(function()
+                                            game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
+                                                BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+                                                TextColor3 = Color3.fromRGB(250,250,250)
+                                            }):Play()
+                                        end)
+                                        
+                                        optionBtn1.MouseLeave:Connect(function()
+                                            game.TweenService:Create(optionBtn1, TweenInfo.new(0.18, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{
+                                                BackgroundColor3 = Color3.fromRGB(21, 21, 21),
+                                                TextColor3 = Color3.fromRGB(120, 200, 187)
+                                            }):Play()
+                                        end)
+                                end
+                            end
+                        
             return ItemHandling
         end
         return sectionHandling
