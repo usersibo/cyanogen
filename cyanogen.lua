@@ -69,7 +69,7 @@ function Luxt1.CreateWindow(libName, logoId)
  keybindInfo1.ZIndex = 2
  keybindInfo1.Font = Enum.Font.GothamSemibold
  keybindInfo1.Text = "Close"
- keybindInfo1.TextColor3 = Color3.fromRGB(60, 60, 60)
+ keybindInfo1.TextColor3 = Color3.fromRGB(255, 255, 255)
  keybindInfo1.TextSize = 13.000
  keybindInfo1.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -116,13 +116,13 @@ function Luxt1.CreateWindow(libName, logoId)
 
  MainFrame.Name = "MainFrame"
  MainFrame.Parent = shadow
- MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
  MainFrame.Position = UDim2.new(0.048, 0,0.075, 0)
  MainFrame.Size = UDim2.new(0, 553, 0, 452)
 
  sideHeading.Name = "sideHeading"
  sideHeading.Parent = MainFrame
- sideHeading.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ sideHeading.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
  sideHeading.Size = UDim2.new(0, 155, 0, 452)
  sideHeading.ZIndex = 2
 
@@ -132,14 +132,15 @@ function Luxt1.CreateWindow(libName, logoId)
 
  sideCover.Name = "sideCover"
  sideCover.Parent = sideHeading
- sideCover.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ sideCover.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
  sideCover.BorderSizePixel = 0
  sideCover.Position = UDim2.new(0.909677446, 0, 0, 0)
  sideCover.Size = UDim2.new(0, 14, 0, 452)
 
  hubLogo.Name = "hubLogo"
  hubLogo.Parent = sideHeading
- hubLogo.BackgroundTransparency = 1
+ hubLogo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ hubLogo.BackgroundTransparency = 0
  hubLogo.Position = UDim2.new(0.0567928664, 0, 0.0243411884, 0)
  hubLogo.Size = UDim2.new(0, 30, 0, 30)
  hubLogo.ZIndex = 2
@@ -187,7 +188,7 @@ function Luxt1.CreateWindow(libName, logoId)
  hubName.ZIndex = 2
  hubName.Font = Enum.Font.GothamSemibold
  hubName.Text = libName
- hubName.TextColor3 = Color3.fromRGB(0, 140, 120)
+ hubName.TextColor3 = Color3.fromRGB(153, 255, 238)
  hubName.TextSize = 14
  hubName.TextWrapped = true
  hubName.TextXAlignment = Enum.TextXAlignment.Left
@@ -215,7 +216,7 @@ function Luxt1.CreateWindow(libName, logoId)
  usename.ZIndex = 2
  usename.Font = Enum.Font.GothamSemibold
  usename.Text = localPlayer.Name
- usename.TextColor3 = Color3.fromRGB(80, 120, 110)
+ usename.TextColor3 = Color3.fromRGB(103, 172, 161)
  usename.TextSize = 12
  usename.TextWrapped = true
  usename.TextXAlignment = Enum.TextXAlignment.Left
@@ -232,8 +233,8 @@ function Luxt1.CreateWindow(libName, logoId)
  wave.Position = UDim2.new(0.0213434305, 0, 0, 0)
  wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
  wave.Image = "http://www.roblox.com/asset/?id=6087537285"
- wave.ImageColor3 = Color3.fromRGB(180, 240, 235)
- wave.ImageTransparency = 0.5
+ wave.ImageColor3 = Color3.fromRGB(181, 249, 255)
+ wave.ImageTransparency = 0.300
  wave.ScaleType = Enum.ScaleType.Slice
 
  MainCorner_4.CornerRadius = UDim.new(0, 3)
@@ -346,12 +347,12 @@ function Luxt1.CreateWindow(libName, logoId)
  for i,v in next, v:GetChildren() do
  if v:IsA("TextButton") then
  game.TweenService:Create(v, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- TextColor3 = Color3.fromRGB(120, 120, 120)
+ TextColor3 = Color3.fromRGB(35, 59, 55)
  }):Play()
  end
  if v:IsA("ImageLabel") then
  game.TweenService:Create(v, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- ImageColor3 = Color3.fromRGB(120, 120, 120)
+ ImageColor3 = Color3.fromRGB(35, 59, 55)
  }):Play()
  end
  end
@@ -765,6 +766,157 @@ function Luxt1.CreateWindow(libName, logoId)
  end)
 
  return keyBindApi
+ end
+
+ function ItemHandling:HoldToggle(toggInfo, first, callback)
+ toggInfo = toggInfo or "Hold Toggle"
+ local oldKey = (typeof(first) == "EnumItem" and first.Name) or (first and first.Name) or "LeftShift"
+ callback = callback or function() end
+
+ local ToggleFrame = Instance.new("Frame")
+ local toggleFrame = Instance.new("Frame")
+ local UICorner = Instance.new("UICorner")
+ local checkBtn = Instance.new("ImageButton")
+ local key = Instance.new("TextButton")
+ local UICorner_key = Instance.new("UICorner")
+ local toggleInfo = Instance.new("TextLabel")
+ local togInList = Instance.new("UIListLayout")
+ local toginPad = Instance.new("UIPadding")
+ local UIListLayout = Instance.new("UIListLayout")
+
+ ToggleFrame.Name = "HoldToggleFrame"
+ ToggleFrame.Parent = sectionFrame
+ ToggleFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+ ToggleFrame.BackgroundTransparency = 1.000
+ ToggleFrame.Size = UDim2.new(0, 365, 0, 36)
+
+ toggleFrame.Name = "toggleFrame"
+ toggleFrame.Parent = ToggleFrame
+ toggleFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+ toggleFrame.Size = UDim2.new(0, 365, 0, 36)
+ toggleFrame.ZIndex = 2
+
+ UICorner.CornerRadius = UDim.new(0, 3)
+ UICorner.Parent = toggleFrame
+
+ checkBtn.Name = "checkBtn"
+ checkBtn.Parent = toggleFrame
+ checkBtn.BackgroundTransparency = 1.000
+ checkBtn.Position = UDim2.new(0.0191780813, 0, 0.138888896, 0)
+ checkBtn.Size = UDim2.new(0, 25, 0, 25)
+ checkBtn.ZIndex = 2
+ checkBtn.Image = "rbxassetid://3926311105"
+ checkBtn.ImageColor3 = Color3.fromRGB(97, 97, 97)
+ checkBtn.ImageRectOffset = Vector2.new(940, 784)
+ checkBtn.ImageRectSize = Vector2.new(48, 48)
+
+ key.Name = "key"
+ key.Parent = toggleFrame
+ key.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+ key.Position = UDim2.new(0.104109593, 0, 0.194111288, 0)
+ key.Size = UDim2.new(0, 76, 0, 22)
+ key.ZIndex = 2
+ key.Font = Enum.Font.GothamSemibold
+ key.Text = oldKey
+ key.TextColor3 = Color3.fromRGB(153, 255, 238)
+ key.TextSize = 14.000
+
+ UICorner_key.CornerRadius = UDim.new(0, 5)
+ UICorner_key.Parent = key
+
+ toggleInfo.Name = "toggleInfo"
+ toggleInfo.Parent = toggleFrame
+ toggleInfo.BackgroundTransparency = 1.000
+ toggleInfo.Position = UDim2.new(0.320547938, 0, 0, 0)
+ toggleInfo.Size = UDim2.new(0, 220, 1, 0)
+ toggleInfo.ZIndex = 2
+ toggleInfo.Font = Enum.Font.GothamSemibold
+ toggleInfo.Text = toggInfo
+ toggleInfo.TextColor3 = Color3.fromRGB(97, 97, 97)
+ toggleInfo.TextSize = 14.000
+ toggleInfo.TextXAlignment = Enum.TextXAlignment.Left
+
+ togInList.Name = "togInList"
+ togInList.Parent = toggleFrame
+ togInList.FillDirection = Enum.FillDirection.Horizontal
+ togInList.SortOrder = Enum.SortOrder.LayoutOrder
+ togInList.VerticalAlignment = Enum.VerticalAlignment.Center
+ togInList.Padding = UDim.new(0, 5)
+
+ toginPad.Name = "toginPad"
+ toginPad.Parent = toggleFrame
+ toginPad.PaddingLeft = UDim.new(0, 7)
+
+ UIListLayout.Parent = ToggleFrame
+ UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+ local on = false
+ local holding = false
+ local UserInputService = game:GetService("UserInputService")
+ local holdBeganConn
+ local holdEndedConn
+
+ local function setToggleState(state, fireCallback)
+ on = state
+ if on then
+ toggleInfo.TextColor3 = Color3.fromRGB(153, 255, 238)
+ checkBtn.ImageColor3 = Color3.fromRGB(153, 255, 238)
+ checkBtn.ImageRectOffset = Vector2.new(4, 836)
+ checkBtn.ImageRectSize = Vector2.new(48, 48)
+ else
+ toggleInfo.TextColor3 = Color3.fromRGB(97, 97, 97)
+ checkBtn.ImageColor3 = Color3.fromRGB(97, 97, 97)
+ checkBtn.ImageRectOffset = Vector2.new(940, 784)
+ checkBtn.ImageRectSize = Vector2.new(48, 48)
+ end
+ if fireCallback ~= false then
+ callback(on)
+ end
+ end
+
+ local function bindHoldListeners()
+ if holdBeganConn then holdBeganConn:Disconnect() end
+ if holdEndedConn then holdEndedConn:Disconnect() end
+ holdBeganConn = UserInputService.InputBegan:Connect(function(input, processed)
+ if processed then return end
+ if input.KeyCode.Name == oldKey then
+ holding = true
+ setToggleState(true, true)
+ toggleFrame:TweenSize(UDim2.new(0, 359, 0, 30), "InOut", "Quint", 0.12, true)
+ end
+ end)
+ holdEndedConn = UserInputService.InputEnded:Connect(function(input)
+ if input.KeyCode.Name == oldKey and holding then
+ holding = false
+ setToggleState(false, true)
+ toggleFrame:TweenSize(UDim2.new(0, 365, 0, 36), "InOut", "Quint", 0.12, true)
+ end
+ end)
+ end
+ bindHoldListeners()
+
+ local holdToggleApi = {}
+ function holdToggleApi:Set(state, fireCallback)
+ holding = state
+ setToggleState(state, fireCallback ~= false)
+ end
+ function holdToggleApi:Get()
+ return on
+ end
+
+ key.MouseButton1Click:Connect(function()
+ key.Text = ". . ."
+ local input = UserInputService.InputBegan:Wait()
+ if input.KeyCode.Name ~= "Unknown" then
+ oldKey = input.KeyCode.Name
+ key.Text = oldKey
+ bindHoldListeners()
+ end
+ end)
+
+ return holdToggleApi
  end
 
  function ItemHandling:TextBox(infbix, textPlace, callback)
