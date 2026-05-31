@@ -1261,3 +1261,5 @@ function Luxt1.CreateWindow(libName, logoId)
 end
 
 return Luxt1
+
+print("iiijdkkkk, h;"
