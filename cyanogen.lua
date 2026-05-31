@@ -59,6 +59,170 @@ function Luxt1.GetThemeNames()
  return n
 end
 
+function Luxt1.AttachRipple(button, accentColor)
+ button.ClipsDescendants = true
+ button.MouseButton1Down:Connect(function(x, y)
+  local absPos = button.AbsolutePosition
+  local absSize = button.AbsoluteSize
+  local relX = absSize.X > 0 and (x - absPos.X) / absSize.X or 0.5
+  local relY = absSize.Y > 0 and (y - absPos.Y) / absSize.Y or 0.5
+  local ripple = Instance.new("Frame")
+  ripple.BackgroundColor3 = accentColor or Color3.fromRGB(255, 255, 255)
+  ripple.BackgroundTransparency = 0.65
+  ripple.BorderSizePixel = 0
+  ripple.AnchorPoint = Vector2.new(0.5, 0.5)
+  ripple.Position = UDim2.new(relX, 0, relY, 0)
+  ripple.Size = UDim2.new(0, 4, 0, 4)
+  ripple.ZIndex = (button.ZIndex or 1) + 2
+  local c = Instance.new("UICorner")
+  c.CornerRadius = UDim.new(1, 0)
+  c.Parent = ripple
+  ripple.Parent = button
+  local maxSize = math.max(button.AbsoluteSize.X, button.AbsoluteSize.Y) * 2.5
+  game.TweenService:Create(ripple, TweenInfo.new(0.42, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+   Size = UDim2.new(0, maxSize, 0, maxSize),
+   BackgroundTransparency = 1,
+  }):Play()
+  task.delay(0.45, function()
+   if ripple.Parent then ripple:Destroy() end
+  end)
+ end)
+end
+
+function Luxt1.OpenKeySystem(options)
+ options = options or {}
+ local title = options.title or "Key System"
+ local placeholder = options.placeholder or "Enter key..."
+ local textBtnLabel = options.textBtn or "Use text"
+ local mainBtnLabel = options.mainBtn or "Submit"
+ local validate = options.validate or function() return true end
+ local onTextClick = options.onTextClick or function() end
+ local onSubmit = options.onSubmit or function() end
+ local onClose = options.onClose or function() end
+ local themeName = options.theme or Luxt1.DefaultTheme
+ local T = Luxt1.GetTheme(themeName)
+
+ local gui = Instance.new("ScreenGui")
+ gui.Name = "LuxtKeySystem"
+ gui.ResetOnSpawn = false
+ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ gui.Parent = game.CoreGui
+
+ local overlay = Instance.new("TextButton")
+ overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ overlay.BackgroundTransparency = 0.45
+ overlay.Size = UDim2.new(1, 0, 1, 0)
+ overlay.Text = ""
+ overlay.AutoButtonColor = false
+ overlay.Parent = gui
+
+ local box = Instance.new("Frame")
+ box.Parent = gui
+ box.AnchorPoint = Vector2.new(0.5, 0.5)
+ box.Position = UDim2.new(0.5, 0, 0.5, 0)
+ box.Size = UDim2.new(0, 340, 0, 220)
+ box.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ local boxC = Instance.new("UICorner")
+ boxC.CornerRadius = UDim.new(0, 8)
+ boxC.Parent = box
+
+ local titleLbl = Instance.new("TextLabel")
+ titleLbl.Parent = box
+ titleLbl.BackgroundTransparency = 1
+ titleLbl.Size = UDim2.new(1, -20, 0, 32)
+ titleLbl.Position = UDim2.new(0, 10, 0, 8)
+ titleLbl.Font = Enum.Font.GothamSemibold
+ titleLbl.Text = title
+ titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+ titleLbl.TextSize = 16
+ titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+ local inputWrap = Instance.new("Frame")
+ inputWrap.Parent = box
+ inputWrap.BackgroundTransparency = 1
+ inputWrap.Position = UDim2.new(0.05, 0, 0, 48)
+ inputWrap.Size = UDim2.new(0.9, 0, 0, 32)
+
+ local lineInput = Instance.new("TextBox")
+ lineInput.Parent = inputWrap
+ lineInput.BackgroundTransparency = 1
+ lineInput.Size = UDim2.new(1, 0, 1, -6)
+ lineInput.Font = Enum.Font.GothamSemibold
+ lineInput.PlaceholderText = placeholder
+ lineInput.PlaceholderColor3 = Color3.fromRGB(140, 140, 140)
+ lineInput.Text = ""
+ lineInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+ lineInput.TextSize = 14
+ lineInput.ClearTextOnFocus = false
+ lineInput.TextXAlignment = Enum.TextXAlignment.Left
+
+ local underline = Instance.new("Frame")
+ underline.Name = "underline"
+ underline.Parent = inputWrap
+ underline.BorderSizePixel = 0
+ underline.BackgroundColor3 = T.Accent
+ underline.Position = UDim2.new(0, 0, 1, -2)
+ underline.Size = UDim2.new(1, 0, 0, 2)
+
+ lineInput.Focused:Connect(function()
+  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 3), BackgroundColor3 = T.Accent}):Play()
+ end)
+ lineInput.FocusLost:Connect(function()
+  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 2)}):Play()
+ end)
+
+ local textAction = Instance.new("TextButton")
+ textAction.Parent = box
+ textAction.BackgroundTransparency = 1
+ textAction.Position = UDim2.new(0.05, 0, 0, 92)
+ textAction.Size = UDim2.new(0.9, 0, 0, 24)
+ textAction.Font = Enum.Font.GothamSemibold
+ textAction.Text = textBtnLabel
+ textAction.TextColor3 = T.Accent
+ textAction.TextSize = 14
+ Luxt1.AttachRipple(textAction, T.Accent)
+
+ local mainBtn = Instance.new("TextButton")
+ mainBtn.Parent = box
+ mainBtn.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+ mainBtn.Position = UDim2.new(0.05, 0, 0, 128)
+ mainBtn.Size = UDim2.new(0.9, 0, 0, 36)
+ mainBtn.Font = Enum.Font.GothamSemibold
+ mainBtn.Text = mainBtnLabel
+ mainBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+ mainBtn.TextSize = 14
+ mainBtn.AutoButtonColor = false
+ local mbC = Instance.new("UICorner")
+ mbC.CornerRadius = UDim.new(0, 5)
+ mbC.Parent = mainBtn
+ Luxt1.AttachRipple(mainBtn, T.Accent)
+
+ local function closeAll()
+  gui:Destroy()
+  onClose()
+ end
+
+ overlay.MouseButton1Click:Connect(closeAll)
+
+ textAction.MouseButton1Click:Connect(function()
+  onTextClick(lineInput.Text)
+ end)
+
+ mainBtn.MouseButton1Click:Connect(function()
+  local txt = lineInput.Text
+  if validate(txt) then
+   onSubmit(txt)
+   closeAll()
+  end
+ end)
+
+ return {
+  Gui = gui,
+  GetText = function() return lineInput.Text end,
+  Close = closeAll,
+ }
+end
+
 function Luxt1.CreateWindow(libName, logoId)
  libName = libName or "LuxtLib"
  logoId = logoId or ""
@@ -79,6 +243,10 @@ function Luxt1.CreateWindow(libName, logoId)
  local TextWhite = Color3.fromRGB(255, 255, 255)
  local TextDim = Color3.fromRGB(180, 180, 180)
  local TabInactiveCol = Color3.fromRGB(90, 90, 90)
+
+ local function ripple(btn, accent)
+  Luxt1.AttachRipple(btn, accent or T.Accent)
+ end
 
  local function applyTheme(themeName)
   if not Luxt1.Themes[themeName] then return end
@@ -560,6 +728,7 @@ function Luxt1.CreateWindow(libName, logoId)
  TextButton.Font = Enum.Font.GothamSemibold
  TextButton.TextColor3 = Color3.fromRGB(180, 180, 180)
  TextButton.TextSize = 14.000
+ ripple(TextButton, T.Accent)
 
  local debounce = false
  local debounce1 = false
@@ -729,6 +898,7 @@ function Luxt1.CreateWindow(libName, logoId)
  setToggleState(not on, fireCallback ~= false)
  end
 
+ ripple(checkBtn, T.Accent)
  checkBtn.MouseButton1Click:Connect(function()
  if not togDe then
  togDe = true
@@ -828,6 +998,7 @@ function Luxt1.CreateWindow(libName, logoId)
  UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
  UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
+ ripple(key, T.Accent)
  key.MouseButton1Click:connect(function(e) 
  keybindFrame:TweenSize(UDim2.new(0, 359,0, 30), "InOut", "Quint", 0.18, true)
  key.Text = ". . ."
@@ -1020,6 +1191,8 @@ function Luxt1.CreateWindow(libName, logoId)
  end
  bindKeyListener()
 
+ ripple(checkBtn, T.Accent)
+ ripple(key, T.Accent)
  checkBtn.MouseButton1Click:Connect(function()
  if not togDe then
  togDe = true
@@ -1131,7 +1304,8 @@ function Luxt1.CreateWindow(libName, logoId)
  UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
  local on = false
- local holding = false
+ local clickLatched = false
+ local keyHeld = false
  local UserInputService = game:GetService("UserInputService")
  local holdBeganConn
  local holdEndedConn
@@ -1160,20 +1334,29 @@ function Luxt1.CreateWindow(libName, logoId)
  holdBeganConn = UserInputService.InputBegan:Connect(function(input, processed)
  if processed then return end
  if input.KeyCode.Name == oldKey then
- holding = true
+ keyHeld = true
  setToggleState(true, true)
  toggleFrame:TweenSize(UDim2.new(0, 359, 0, 30), "InOut", "Quint", 0.12, true)
  end
  end)
  holdEndedConn = UserInputService.InputEnded:Connect(function(input)
- if input.KeyCode.Name == oldKey and holding then
- holding = false
+ if input.KeyCode.Name == oldKey and keyHeld then
+ keyHeld = false
+ clickLatched = false
  setToggleState(false, true)
  toggleFrame:TweenSize(UDim2.new(0, 365, 0, 36), "InOut", "Quint", 0.12, true)
  end
  end)
  end
  bindHoldListeners()
+
+ ripple(checkBtn, T.Accent)
+ ripple(key, T.Accent)
+ checkBtn.MouseButton1Click:Connect(function()
+ if keyHeld then return end
+ clickLatched = not clickLatched
+ setToggleState(clickLatched, true)
+ end)
 
  addThemeUpdater(function(theme)
   if on then
@@ -1189,7 +1372,8 @@ function Luxt1.CreateWindow(libName, logoId)
 
  local holdToggleApi = {}
  function holdToggleApi:Set(state, fireCallback)
- holding = state
+ if keyHeld then return end
+ clickLatched = state
  setToggleState(state, fireCallback ~= false)
  end
  function holdToggleApi:Get()
@@ -1210,32 +1394,30 @@ function Luxt1.CreateWindow(libName, logoId)
  end
 
  function ItemHandling:TextBox(infbix, textPlace, callback)
- --
  infbix = infbix or "TextBox"
  textPlace = textPlace or "PlaceHolder"
  callback = callback or function() end
- --
- local a
+
  local TextBoxFrame = Instance.new("Frame")
  local textboxFrame = Instance.new("Frame")
  local UICorner = Instance.new("UICorner")
  local textboxInfo = Instance.new("TextLabel")
+ local inputWrap = Instance.new("Frame")
  local TextBox = Instance.new("TextBox")
- local UICorner_2 = Instance.new("UICorner")
+ local underline = Instance.new("Frame")
  local textboxinlist = Instance.new("UIListLayout")
  local txtboxpa = Instance.new("UIPadding")
  local UIListLayout = Instance.new("UIListLayout")
 
  TextBoxFrame.Name = "TextBoxFrame"
  TextBoxFrame.Parent = sectionFrame
- TextBoxFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
- TextBoxFrame.BackgroundTransparency = 1.000
- TextBoxFrame.Size = UDim2.new(0, 365, 0, 36)
+ TextBoxFrame.BackgroundTransparency = 1
+ TextBoxFrame.Size = UDim2.new(0, 365, 0, 40)
 
  textboxFrame.Name = "textboxFrame"
  textboxFrame.Parent = TextBoxFrame
  textboxFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
- textboxFrame.Size = UDim2.new(0, 365, 0, 36)
+ textboxFrame.Size = UDim2.new(0, 365, 0, 40)
  textboxFrame.ZIndex = 2
 
  UICorner.CornerRadius = UDim.new(0, 3)
@@ -1243,36 +1425,57 @@ function Luxt1.CreateWindow(libName, logoId)
 
  textboxInfo.Name = "textboxInfo"
  textboxInfo.Parent = textboxFrame
- textboxInfo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
- textboxInfo.BackgroundTransparency = 1.000
- textboxInfo.Position = UDim2.new(0.320547938, 0, 0.166666672, 0)
+ textboxInfo.BackgroundTransparency = 1
+ textboxInfo.Position = UDim2.new(0.320547938, 0, 0.12, 0)
  textboxInfo.Size = UDim2.new(0, 239, 0, 22)
  textboxInfo.ZIndex = 2
  textboxInfo.Font = Enum.Font.GothamSemibold
  textboxInfo.Text = infbix
  textboxInfo.TextColor3 = Color3.fromRGB(255, 255, 255)
- textboxInfo.TextSize = 13.000
+ textboxInfo.TextSize = 13
  textboxInfo.TextXAlignment = Enum.TextXAlignment.Left
 
- TextBox.Parent = textboxFrame
- TextBox.BackgroundColor3 = T.TextBoxFill
- addThemeUpdater(function(theme)
-  TextBox.BackgroundColor3 = theme.TextBoxFill
- end)
- TextBox.ClipsDescendants = true
- TextBox.Position = UDim2.new(0.0250000004, 0, 0.194000006, 0)
- TextBox.Size = UDim2.new(0, 100, 0, 22)
- TextBox.ZIndex = 2
- TextBox.ClearTextOnFocus = false
- TextBox.Font = Enum.Font.GothamSemibold
- TextBox.PlaceholderColor3 = Color3.fromRGB(24, 24, 24)
- TextBox.Text = ""
- TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
- TextBox.TextSize = 13.000
- TextBox.PlaceholderText = textPlace
+ inputWrap.Name = "inputWrap"
+ inputWrap.Parent = textboxFrame
+ inputWrap.BackgroundTransparency = 1
+ inputWrap.Position = UDim2.new(0.025, 0, 0.2, 0)
+ inputWrap.Size = UDim2.new(0, 120, 0, 26)
+ inputWrap.ZIndex = 2
 
- UICorner_2.CornerRadius = UDim.new(0, 5)
- UICorner_2.Parent = TextBox
+ TextBox.Parent = inputWrap
+ TextBox.BackgroundTransparency = 1
+ TextBox.Size = UDim2.new(1, 0, 1, -6)
+ TextBox.Font = Enum.Font.GothamSemibold
+ TextBox.PlaceholderText = textPlace
+ TextBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+ TextBox.Text = ""
+ TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ TextBox.TextSize = 13
+ TextBox.ClearTextOnFocus = false
+ TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+ underline.Name = "underline"
+ underline.Parent = inputWrap
+ underline.BorderSizePixel = 0
+ underline.BackgroundColor3 = T.Accent
+ underline.Position = UDim2.new(0, 0, 1, -2)
+ underline.Size = UDim2.new(1, 0, 0, 2)
+
+ addThemeUpdater(function(theme)
+  underline.BackgroundColor3 = theme.Accent
+ end)
+
+ TextBox.Focused:Connect(function()
+  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 3)}):Play()
+  textboxFrame:TweenSize(UDim2.new(0, 359, 0, 38), "InOut", "Quint", 0.12, true)
+ end)
+ TextBox.FocusLost:Connect(function(EnterPressed)
+  game.TweenService:Create(underline, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 2)}):Play()
+  textboxFrame:TweenSize(UDim2.new(0, 365, 0, 40), "InOut", "Quint", 0.12, true)
+  if EnterPressed then
+   callback(TextBox.Text)
+  end
+ end)
 
  textboxinlist.Name = "textboxinlist"
  textboxinlist.Parent = textboxFrame
@@ -1289,23 +1492,10 @@ function Luxt1.CreateWindow(libName, logoId)
  UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
  UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
- function anim(property)
- if property == "Text" then
- textboxFrame:TweenSize(UDim2.new(0, 359,0, 30), "InOut", "Quint", 0.18, true)
- wait(0.18)
- textboxFrame:TweenSize(UDim2.new(0, 365,0, 36), "InOut", "Quint", 0.18, true)
- end
- end
- TextBox.Changed:Connect(anim)
-
- TextBox.FocusLost:Connect(function(EnterPressed)
- if not EnterPressed then return end
- callback(TextBox.Text)
- textboxFrame:TweenSize(UDim2.new(0, 359,0, 30), "InOut", "Quint", 0.18, true)
- wait(0.18)
- textboxFrame:TweenSize(UDim2.new(0, 365,0, 36), "InOut", "Quint", 0.18, true)
- TextBox.Text = "" 
- end)
+ return {
+  Get = function() return TextBox.Text end,
+  Set = function(t) TextBox.Text = t end,
+ }
  end
 
  function ItemHandling:Slider(slidInfo, minvalue, maxvalue, callback)
@@ -1674,6 +1864,8 @@ function Luxt1.CreateWindow(libName, logoId)
  dropdownItem1.TextSize = 14.000
  dropdownItem1.TextXAlignment = Enum.TextXAlignment.Left
 
+ ripple(expand_more, T.Accent)
+
  local dropdownOptionBtns = {}
 
  addThemeUpdater(function(theme)
@@ -1726,6 +1918,7 @@ function Luxt1.CreateWindow(libName, logoId)
 
  UICorner_3.CornerRadius = UDim.new(0, 3)
  UICorner_3.Parent = optionBtn1
+ ripple(optionBtn1, T.Accent)
 
  DropYSize = DropYSize + 40
  optionBtn1.MouseButton1Click:Connect(function()
@@ -1788,6 +1981,12 @@ function Luxt1.CreateWindow(libName, logoId)
 
  function TabHandling:GetThemeNames()
   return Luxt1.GetThemeNames()
+ end
+
+ function TabHandling:OpenKeySystem(options)
+  options = options or {}
+  options.theme = options.theme or currentThemeName
+  return Luxt1.OpenKeySystem(options)
  end
 
  return TabHandling
