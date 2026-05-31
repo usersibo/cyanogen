@@ -143,7 +143,7 @@ function Luxt1.CreateWindow(libName, logoId)
     hubLogo.Position = UDim2.new(0.0567928664, 0, 0.0243411884, 0)
     hubLogo.Size = UDim2.new(0, 30, 0, 30)
     hubLogo.ZIndex = 2
-    hubLogo.Image = "rbxthumb://type=AvatarHeadShot&id=" .. game.Players.LocalPlayer.UserId .. "&w=150&h=150"
+    hubLogo.Image = "rbxassetid://"..logoId
 
     MainCorner_2.CornerRadius = UDim.new(0, 999)
     MainCorner_2.Name = "MainCorner"
@@ -1258,12 +1258,6 @@ function Luxt1.CreateWindow(libName, logoId)
         return sectionHandling
     end
     return TabHandling
-    task.spawn(function()
-    task.wait(0.1)
-    if hubLogo then
-        hubLogo.Image = "rbxthumb://type=AvatarHeadShot&id=" .. game.Players.LocalPlayer.UserId .. "&w=150&h=150"
-    end
-end)
 end
-return Luxt1
 
+return Luxt1
