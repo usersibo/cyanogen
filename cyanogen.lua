@@ -23,6 +23,10 @@ function Luxt1.CreateWindow(libName, logoId)
     local UICorner = Instance.new("UICorner")
     local keybindInfo1 = Instance.new("TextLabel")
 
+    -- Получаем игрока и сервисы
+    local Players = game:GetService("Players")
+    local lplr = Players.LocalPlayer
+
     key1.Name = "key1"
     key1.Parent = sideHeading
     key1.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
@@ -143,7 +147,20 @@ function Luxt1.CreateWindow(libName, logoId)
     hubLogo.Position = UDim2.new(0.0567928664, 0, 0.0243411884, 0)
     hubLogo.Size = UDim2.new(0, 30, 0, 30)
     hubLogo.ZIndex = 2
-    hubLogo.Image = "rbxassetid://"..logoId
+    
+    -- === ИСПРАВЛЕНИЕ АВАТАРА === --
+    -- Теперь мы ставим аватар игрока сюда, вместо logoId
+    local success, avatarImage = pcall(function()
+        return Players:GetUserThumbnailAsync(lplr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+    end)
+    
+    if success then
+        hubLogo.Image = avatarImage
+    else
+        -- Фолбэк, если не получилось загрузить
+        hubLogo.Image = "rbxassetid://"..(logoId ~= "" and logoId or "6842817309") 
+    end
+    -- ============================== --
 
     MainCorner_2.CornerRadius = UDim.new(0, 999)
     MainCorner_2.Name = "MainCorner"
@@ -186,7 +203,7 @@ function Luxt1.CreateWindow(libName, logoId)
     usename.Size = UDim2.new(0, 110, 0, 16)
     usename.ZIndex = 2
     usename.Font = Enum.Font.GothamSemibold
-    usename.Text = game.Players.LocalPlayer.Name
+    usename.Text = lplr.Name
     usename.TextColor3 = Color3.fromRGB(103, 172, 161)
     usename.TextSize = 12.000
     usename.TextWrapped = true
@@ -202,7 +219,7 @@ function Luxt1.CreateWindow(libName, logoId)
     wave.BackgroundTransparency = 1.000
     wave.Position = UDim2.new(0.0213434305, 0, 0, 0)
     wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
-    wave.Image = "http://www.roblox.com/asset/?id=6087537285"
+    wave.Image = "rbxassetid://6087537285" -- Использован rbxassetid для совместимости
     wave.ImageColor3 = Color3.fromRGB(181, 249, 255)
     wave.ImageTransparency = 0.300
     wave.ScaleType = Enum.ScaleType.Slice
@@ -227,7 +244,7 @@ function Luxt1.CreateWindow(libName, logoId)
     shadow.Position = UDim2.new(0.319562584, 0, 0.168689325, 0)
     shadow.Size = UDim2.new(0, 609, 0, 530)
     shadow.ZIndex = 0
-    shadow.Image = "http://www.roblox.com/asset/?id=6105530152"
+    shadow.Image = "rbxassetid://6105530152"
     shadow.ImageColor3 = Color3.fromRGB(9, 9, 9)
     shadow.ImageTransparency = 0.600
 
@@ -1251,8 +1268,6 @@ function Luxt1.CreateWindow(libName, logoId)
                                             }):Play()
                                         end)
                                 end
-                            end
-                        
             return ItemHandling
         end
         return sectionHandling
