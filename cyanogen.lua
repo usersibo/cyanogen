@@ -35,6 +35,16 @@ Luxt1.Themes = {
   Wave = rgb(170, 210, 255), TabInactive = rgb(35, 45, 59), ToggleOff = rgb(97, 97, 97),
   SliderFill = rgb(120, 190, 255), TextBoxFill = rgb(120, 190, 255), KeyText = rgb(120, 190, 255), ButtonPress = rgb(80, 140, 200),
  },
+ White = {
+  Accent = rgb(255, 255, 255), AccentDim = rgb(220, 220, 220), AccentMuted = rgb(200, 200, 200),
+  Wave = rgb(255, 255, 255), TabInactive = rgb(90, 90, 90), ToggleOff = rgb(110, 110, 110),
+  SliderFill = rgb(255, 255, 255), TextBoxFill = rgb(255, 255, 255), KeyText = rgb(255, 255, 255), ButtonPress = rgb(230, 230, 230),
+ },
+ Grey = {
+  Accent = rgb(170, 170, 170), AccentDim = rgb(140, 140, 140), AccentMuted = rgb(155, 155, 155),
+  Wave = rgb(140, 140, 140), TabInactive = rgb(80, 80, 80), ToggleOff = rgb(100, 100, 100),
+  SliderFill = rgb(170, 170, 170), TextBoxFill = rgb(170, 170, 170), KeyText = rgb(170, 170, 170), ButtonPress = rgb(130, 130, 130),
+ },
 }
 Luxt1.DefaultTheme = "Cyan"
 
@@ -62,8 +72,6 @@ function Luxt1.CreateWindow(libName, logoId)
   table.insert(themeUpdaters, fn)
  end
 
- local wave
- local waveTint
  local hubName
  local usename
  local key1
@@ -76,12 +84,6 @@ function Luxt1.CreateWindow(libName, logoId)
   if not Luxt1.Themes[themeName] then return end
   currentThemeName = themeName
   T = Luxt1.GetTheme(themeName)
-  if waveTint then waveTint.BackgroundColor3 = T.Wave end
-  if wave then
-   wave.Image = "rbxassetid://6087537285"
-   wave.ImageColor3 = T.Wave
-   wave.ImageTransparency = 0.4
-  end
   if key1 then key1.TextColor3 = T.KeyText end
   for _, data in pairs(tabRegistry) do
    if data.active then
@@ -108,7 +110,6 @@ function Luxt1.CreateWindow(libName, logoId)
  local UIListLayout = Instance.new("UIListLayout")
  usename = Instance.new("TextLabel")
  local MainCorner_3 = Instance.new("UICorner")
- local MainCorner_4 = Instance.new("UICorner")
  local framesAll = Instance.new("Frame")
  local pageFolder = Instance.new("Folder")
 
@@ -315,36 +316,6 @@ function Luxt1.CreateWindow(libName, logoId)
  MainCorner_3.CornerRadius = UDim.new(0, 5)
  MainCorner_3.Name = "MainCorner"
  MainCorner_3.Parent = MainFrame
-
- waveTint = Instance.new("Frame")
- waveTint.Name = "waveTint"
- waveTint.Parent = MainFrame
- waveTint.BorderSizePixel = 0
- waveTint.Position = UDim2.new(0.0213434305, 0, 0, 0)
- waveTint.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
- waveTint.BackgroundColor3 = T.Wave
- waveTint.BackgroundTransparency = 0.88
- waveTint.ZIndex = 0
-
- local waveTintCorner = Instance.new("UICorner")
- waveTintCorner.CornerRadius = UDim.new(0, 3)
- waveTintCorner.Parent = waveTint
-
- wave = Instance.new("ImageLabel")
- wave.Name = "wave"
- wave.Parent = MainFrame
- wave.BackgroundTransparency = 1
- wave.Position = UDim2.new(0.0213434305, 0, 0, 0)
- wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
- wave.Image = "rbxassetid://6087537285"
- wave.ImageColor3 = T.Wave
- wave.ImageTransparency = 0.4
- wave.ScaleType = Enum.ScaleType.Fit
- wave.ZIndex = 1
-
- MainCorner_4.CornerRadius = UDim.new(0, 3)
- MainCorner_4.Name = "MainCorner"
- MainCorner_4.Parent = wave
 
  framesAll.Name = "framesAll"
  framesAll.Parent = MainFrame
