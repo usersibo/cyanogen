@@ -67,23 +67,19 @@ function Luxt1.CreateWindow(libName, logoId)
  local usename
  local key1
 
+ local TextWhite = Color3.fromRGB(255, 255, 255)
+ local TextDim = Color3.fromRGB(180, 180, 180)
+ local TabInactiveCol = Color3.fromRGB(90, 90, 90)
+
  local function applyTheme(themeName)
   if not Luxt1.Themes[themeName] then return end
   currentThemeName = themeName
   T = Luxt1.GetTheme(themeName)
-  if wave then wave.ImageColor3 = T.Wave end
-  if hubName then hubName.TextColor3 = T.Accent end
-  if usename then usename.TextColor3 = T.AccentDim end
-  if key1 then key1.TextColor3 = T.KeyText end
-  for _, data in pairs(tabRegistry) do
-   if data.active then
-    data.btn.TextColor3 = T.Accent
-    if data.logo then data.logo.ImageColor3 = T.Accent end
-   else
-    data.btn.TextColor3 = T.TabInactive
-    if data.logo then data.logo.ImageColor3 = T.TabInactive end
-   end
+  if wave then
+   wave.ImageColor3 = T.Wave
+   wave.ImageTransparency = 0.35
   end
+  if key1 then key1.TextColor3 = T.KeyText end
   for _, fn in ipairs(themeUpdaters) do pcall(fn, T) end
  end
 
@@ -271,7 +267,7 @@ function Luxt1.CreateWindow(libName, logoId)
  hubName.ZIndex = 2
  hubName.Font = Enum.Font.GothamSemibold
  hubName.Text = libName
- hubName.TextColor3 = T.Accent
+ hubName.TextColor3 = TextWhite
  hubName.TextSize = 14
  hubName.TextWrapped = true
  hubName.TextXAlignment = Enum.TextXAlignment.Left
@@ -299,7 +295,7 @@ function Luxt1.CreateWindow(libName, logoId)
  usename.ZIndex = 2
  usename.Font = Enum.Font.GothamSemibold
  usename.Text = localPlayer.Name
- usename.TextColor3 = T.AccentDim
+ usename.TextColor3 = TextDim
  usename.TextSize = 12
  usename.TextWrapped = true
  usename.TextXAlignment = Enum.TextXAlignment.Left
@@ -317,8 +313,9 @@ function Luxt1.CreateWindow(libName, logoId)
  wave.Size = UDim2.new(0.97865659, 0, 0.557522118, 0)
  wave.Image = "http://www.roblox.com/asset/?id=6087537285"
  wave.ImageColor3 = T.Wave
- wave.ImageTransparency = 0.300
+ wave.ImageTransparency = 0.35
  wave.ScaleType = Enum.ScaleType.Slice
+ wave.ZIndex = 1
 
  MainCorner_4.CornerRadius = UDim.new(0, 3)
  MainCorner_4.Name = "MainCorner"
@@ -371,7 +368,7 @@ function Luxt1.CreateWindow(libName, logoId)
  tabBtn.ZIndex = 2
  tabBtn.Font = Enum.Font.Gotham
  tabBtn.Text = tabText
- tabBtn.TextColor3 = T.Accent
+ tabBtn.TextColor3 = TabInactiveCol
  tabBtn.TextSize = 14.000
  tabBtn.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -384,7 +381,7 @@ function Luxt1.CreateWindow(libName, logoId)
  tabLogo.Size = UDim2.new(0, 25, 0, 25)
  tabLogo.ZIndex = 2
  tabLogo.Image = "rbxassetid://"..tabId
- tabLogo.ImageColor3 = T.Accent
+ tabLogo.ImageColor3 = TabInactiveCol
 
  tabRegistry[tabBtn] = {btn = tabBtn, logo = (tabId ~= "" and tabLogo or nil), active = false}
 
@@ -431,12 +428,12 @@ function Luxt1.CreateWindow(libName, logoId)
  for i,v in next, v:GetChildren() do
  if v:IsA("TextButton") then
  game.TweenService:Create(v, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- TextColor3 = T.TabInactive
+ TextColor3 = TabInactiveCol
  }):Play()
  end
  if v:IsA("ImageLabel") then
  game.TweenService:Create(v, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- ImageColor3 = T.TabInactive
+ ImageColor3 = TabInactiveCol
  }):Play()
  end
  end
@@ -445,10 +442,10 @@ function Luxt1.CreateWindow(libName, logoId)
  for _, data in pairs(tabRegistry) do data.active = false end
  tabRegistry[tabBtn].active = true
  game.TweenService:Create(tabLogo, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- ImageColor3 = T.Accent
+ ImageColor3 = TextWhite
  }):Play()
  game.TweenService:Create(tabBtn, TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
- TextColor3 = T.Accent
+ TextColor3 = TextWhite
  }):Play()
  end)
 
@@ -500,7 +497,7 @@ function Luxt1.CreateWindow(libName, logoId)
  sectionName.Size = UDim2.new(0, 302, 0, 36)
  sectionName.Font = Enum.Font.GothamSemibold
  sectionName.Text = sectionText
- sectionName.TextColor3 = T.Accent
+ sectionName.TextColor3 = TextWhite
  sectionName.TextSize = 14.000
  sectionName.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -516,7 +513,6 @@ function Luxt1.CreateWindow(libName, logoId)
  sectionExpannd.ImageRectSize = Vector2.new(36, 36)
 
  addThemeUpdater(function(theme)
-  sectionName.TextColor3 = theme.Accent
   sectionExpannd.ImageColor3 = theme.Accent
  end)
 
@@ -673,7 +669,7 @@ function Luxt1.CreateWindow(libName, logoId)
  toggleInfo.ZIndex = 2
  toggleInfo.Font = Enum.Font.GothamSemibold
  toggleInfo.Text = toggInfo
- toggleInfo.TextColor3 = Color3.fromRGB(97, 97, 97)
+ toggleInfo.TextColor3 = TextWhite
  toggleInfo.TextSize = 14.000
  toggleInfo.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -699,12 +695,12 @@ function Luxt1.CreateWindow(libName, logoId)
  local function setToggleState(state, fireCallback)
  on = state
  if on then
- toggleInfo.TextColor3 = T.Accent
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.Accent
  checkBtn.ImageRectOffset = Vector2.new(4, 836)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
  else
- toggleInfo.TextColor3 = T.ToggleOff
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.ToggleOff
  checkBtn.ImageRectOffset = Vector2.new(940, 784)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
@@ -716,11 +712,13 @@ function Luxt1.CreateWindow(libName, logoId)
 
  addThemeUpdater(function(theme)
   if on then
-   toggleInfo.TextColor3 = theme.Accent
    checkBtn.ImageColor3 = theme.Accent
+   checkBtn.ImageRectOffset = Vector2.new(4, 836)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   else
-   toggleInfo.TextColor3 = theme.ToggleOff
    checkBtn.ImageColor3 = theme.ToggleOff
+   checkBtn.ImageRectOffset = Vector2.new(940, 784)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   end
  end)
 
@@ -797,6 +795,10 @@ function Luxt1.CreateWindow(libName, logoId)
  key.Text = oldKey
  key.TextColor3 = T.KeyText
  key.TextSize = 14.000
+
+ addThemeUpdater(function(theme)
+  key.TextColor3 = theme.KeyText
+ end)
 
  UICorner_2.CornerRadius = UDim.new(0, 5)
  UICorner_2.Parent = key
@@ -923,6 +925,10 @@ function Luxt1.CreateWindow(libName, logoId)
  key.TextColor3 = T.KeyText
  key.TextSize = 14.000
 
+ addThemeUpdater(function(theme)
+  key.TextColor3 = theme.KeyText
+ end)
+
  UICorner_key.CornerRadius = UDim.new(0, 5)
  UICorner_key.Parent = key
 
@@ -934,7 +940,7 @@ function Luxt1.CreateWindow(libName, logoId)
  toggleInfo.ZIndex = 2
  toggleInfo.Font = Enum.Font.GothamSemibold
  toggleInfo.Text = toggInfo
- toggleInfo.TextColor3 = Color3.fromRGB(97, 97, 97)
+ toggleInfo.TextColor3 = TextWhite
  toggleInfo.TextSize = 14.000
  toggleInfo.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -963,12 +969,12 @@ function Luxt1.CreateWindow(libName, logoId)
  local function setToggleState(state, fireCallback)
  on = state
  if on then
- toggleInfo.TextColor3 = T.Accent
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.Accent
  checkBtn.ImageRectOffset = Vector2.new(4, 836)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
  else
- toggleInfo.TextColor3 = T.ToggleOff
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.ToggleOff
  checkBtn.ImageRectOffset = Vector2.new(940, 784)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
@@ -980,11 +986,13 @@ function Luxt1.CreateWindow(libName, logoId)
 
  addThemeUpdater(function(theme)
   if on then
-   toggleInfo.TextColor3 = theme.Accent
    checkBtn.ImageColor3 = theme.Accent
+   checkBtn.ImageRectOffset = Vector2.new(4, 836)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   else
-   toggleInfo.TextColor3 = theme.ToggleOff
    checkBtn.ImageColor3 = theme.ToggleOff
+   checkBtn.ImageRectOffset = Vector2.new(940, 784)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   end
  end)
 
@@ -1091,6 +1099,10 @@ function Luxt1.CreateWindow(libName, logoId)
  key.TextColor3 = T.KeyText
  key.TextSize = 14.000
 
+ addThemeUpdater(function(theme)
+  key.TextColor3 = theme.KeyText
+ end)
+
  UICorner_key.CornerRadius = UDim.new(0, 5)
  UICorner_key.Parent = key
 
@@ -1102,7 +1114,7 @@ function Luxt1.CreateWindow(libName, logoId)
  toggleInfo.ZIndex = 2
  toggleInfo.Font = Enum.Font.GothamSemibold
  toggleInfo.Text = toggInfo
- toggleInfo.TextColor3 = Color3.fromRGB(97, 97, 97)
+ toggleInfo.TextColor3 = TextWhite
  toggleInfo.TextSize = 14.000
  toggleInfo.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1131,12 +1143,12 @@ function Luxt1.CreateWindow(libName, logoId)
  local function setToggleState(state, fireCallback)
  on = state
  if on then
- toggleInfo.TextColor3 = T.Accent
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.Accent
  checkBtn.ImageRectOffset = Vector2.new(4, 836)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
  else
- toggleInfo.TextColor3 = T.ToggleOff
+ toggleInfo.TextColor3 = TextWhite
  checkBtn.ImageColor3 = T.ToggleOff
  checkBtn.ImageRectOffset = Vector2.new(940, 784)
  checkBtn.ImageRectSize = Vector2.new(48, 48)
@@ -1169,11 +1181,13 @@ function Luxt1.CreateWindow(libName, logoId)
 
  addThemeUpdater(function(theme)
   if on then
-   toggleInfo.TextColor3 = theme.Accent
    checkBtn.ImageColor3 = theme.Accent
+   checkBtn.ImageRectOffset = Vector2.new(4, 836)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   else
-   toggleInfo.TextColor3 = theme.ToggleOff
    checkBtn.ImageColor3 = theme.ToggleOff
+   checkBtn.ImageRectOffset = Vector2.new(940, 784)
+   checkBtn.ImageRectSize = Vector2.new(48, 48)
   end
  end)
 
@@ -1246,6 +1260,9 @@ function Luxt1.CreateWindow(libName, logoId)
 
  TextBox.Parent = textboxFrame
  TextBox.BackgroundColor3 = T.TextBoxFill
+ addThemeUpdater(function(theme)
+  TextBox.BackgroundColor3 = theme.TextBoxFill
+ end)
  TextBox.ClipsDescendants = true
  TextBox.Position = UDim2.new(0.0250000004, 0, 0.194000006, 0)
  TextBox.Size = UDim2.new(0, 100, 0, 22)
@@ -1355,6 +1372,10 @@ function Luxt1.CreateWindow(libName, logoId)
  dragSlider.BackgroundColor3 = T.SliderFill
  dragSlider.Size = UDim2.new(0, 0, 0, 6)
  dragSlider.ZIndex = 2
+
+ addThemeUpdater(function(theme)
+  dragSlider.BackgroundColor3 = theme.SliderFill
+ end)
 
  UICorner_3.CornerRadius = UDim.new(0, 5)
  UICorner_3.Parent = dragSlider
@@ -1653,12 +1674,11 @@ function Luxt1.CreateWindow(libName, logoId)
  dropdownItem1.ZIndex = 2
  dropdownItem1.Font = Enum.Font.GothamSemibold
  dropdownItem1.Text = dropInfo
- dropdownItem1.TextColor3 = T.Accent
+ dropdownItem1.TextColor3 = TextWhite
  dropdownItem1.TextSize = 14.000
  dropdownItem1.TextXAlignment = Enum.TextXAlignment.Left
 
  addThemeUpdater(function(theme)
-  dropdownItem1.TextColor3 = theme.Accent
   expand_more.ImageColor3 = theme.Accent
  end)
 
