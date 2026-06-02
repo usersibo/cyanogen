@@ -59,6 +59,60 @@ function Luxt1.GetThemeNames()
  return n
 end
 
+local MOUSE_BIND_TYPES = {
+ [Enum.UserInputType.MouseButton1] = true,
+ [Enum.UserInputType.MouseButton2] = true,
+ [Enum.UserInputType.MouseButton3] = true,
+}
+
+function Luxt1.BindFromInput(input)
+ if input.UserInputType == Enum.UserInputType.Keyboard then
+  if input.KeyCode.Name ~= "Unknown" then
+   return "Key", input.KeyCode.Name
+  end
+ elseif MOUSE_BIND_TYPES[input.UserInputType] then
+  return "Mouse", input.UserInputType.Name
+ end
+ return nil, nil
+end
+
+function Luxt1.BindFromEnum(item)
+ if typeof(item) ~= "EnumItem" then return nil, nil end
+ if item.EnumType == Enum.KeyCode then
+  return "Key", item.Name
+ end
+ if item.EnumType == Enum.UserInputType and MOUSE_BIND_TYPES[item] then
+  return "Mouse", item.Name
+ end
+ return nil, nil
+end
+
+function Luxt1.BindDisplay(kind, name)
+ if kind == "Mouse" then
+  if name == "MouseButton1" then return "M1" end
+  if name == "MouseButton2" then return "M2" end
+  if name == "MouseButton3" then return "M3" end
+ end
+ return name
+end
+
+function Luxt1.InputMatchesBind(kind, name, input)
+ if kind == "Key" then
+  return input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == name
+ end
+ if kind == "Mouse" then
+  return input.UserInputType.Name == name
+ end
+ return false
+end
+
+function Luxt1.WaitForBind(uis)
+ while true do
+  local kind, bindName = Luxt1.BindFromInput(uis.InputBegan:Wait())
+  if kind then return kind, bindName end
+ end
+end
+
 function Luxt1.AttachRipple(button, accentColor)
  button.ClipsDescendants = true
  button.MouseButton1Down:Connect(function(x, y)
@@ -149,6 +203,8 @@ function Luxt1.CreateWindow(libName, logoId)
  local framesAll = Instance.new("Frame")
  local pageFolder = Instance.new("Folder")
 
+ local UserInputService = game:GetService("UserInputService")
+
  key1 = Instance.new("TextButton")
  local UICorner = Instance.new("UICorner")
  local keybindInfo1 = Instance.new("TextLabel")
@@ -160,30 +216,23 @@ function Luxt1.CreateWindow(libName, logoId)
  key1.Size = UDim2.new(0, 76, 0, 22)
  key1.ZIndex = 2
  key1.Font = Enum.Font.GothamSemibold
- key1.Text = "F1"
+ key1.Text = "Insert"
  key1.TextColor3 = T.KeyText
  key1.TextSize = 14.000
 
- local oldKey = Enum.KeyCode.F1.Name
+ local menuBindKind = "Key"
+ local menuBindName = Enum.KeyCode.Insert.Name
 
- key1.MouseButton1Click:connect(function(e)
+ key1.MouseButton1Click:connect(function()
   key1.Text = ". . ."
-  local a, b = game:GetService('UserInputService').InputBegan:wait();
-  if a.KeyCode.Name ~= "Unknown" then
-   key1.Text = a.KeyCode.Name
-   oldKey = a.KeyCode.Name;
-  end
+  task.wait(0.15)
+  menuBindKind, menuBindName = Luxt1.WaitForBind(UserInputService)
+  key1.Text = Luxt1.BindDisplay(menuBindKind, menuBindName)
  end)
 
- game:GetService("UserInputService").InputBegan:connect(function(current, ok)
-  if not ok then
-   if current.KeyCode.Name == oldKey then
-    if LuxtLib.Enabled == true then
-     LuxtLib.Enabled = false
-    else
-     LuxtLib.Enabled = true
-    end
-   end
+ UserInputService.InputBegan:connect(function(current, ok)
+  if not ok and Luxt1.InputMatchesBind(menuBindKind, menuBindName, current) then
+   LuxtLib.Enabled = not LuxtLib.Enabled
   end
  end)
 
@@ -202,8 +251,6 @@ function Luxt1.CreateWindow(libName, logoId)
  keybindInfo1.TextColor3 = Color3.fromRGB(255, 255, 255)
  keybindInfo1.TextSize = 13.000
  keybindInfo1.TextXAlignment = Enum.TextXAlignment.Left
-
- local UserInputService = game:GetService("UserInputService")
 
  local TopBar = sideHeading
 
@@ -809,7 +856,9 @@ function Luxt1.CreateWindow(libName, logoId)
    function ItemHandling:KeyBind(keyInfo, first, callback, linkedToggle)
     --
     keyInfo = keyInfo or "KeyBind"
-    local oldKey = (typeof(first) == "EnumItem" and first.Name) or (first and first.Name) or "R"
+    local bindKind, bindName = Luxt1.BindFromEnum(first)
+    bindKind = bindKind or "Key"
+    bindName = bindName or "R"
     callback = callback or function() end
     linkedToggle = linkedToggle or nil
 
@@ -845,7 +894,7 @@ function Luxt1.CreateWindow(libName, logoId)
     key.Size = UDim2.new(0, 100, 0, 22)
     key.ZIndex = 2
     key.Font = Enum.Font.GothamSemibold
-    key.Text = oldKey
+    key.Text = Luxt1.BindDisplay(bindKind, bindName)
     key.TextColor3 = T.KeyText
     key.TextSize = 14.000
 
@@ -885,16 +934,15 @@ function Luxt1.CreateWindow(libName, logoId)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
+    local KeyBindUIS = game:GetService("UserInputService")
     ripple(key, T.Accent)
-    key.MouseButton1Click:connect(function(e)
+    key.MouseButton1Click:connect(function()
      keybindFrame:TweenSize(UDim2.new(0, 359,0, 30), "InOut", "Quint", 0.18, true)
      key.Text = ". . ."
-     local a, b = game:GetService('UserInputService').InputBegan:wait();
-     if a.KeyCode.Name ~= "Unknown" then
-      keybindFrame:TweenSize(UDim2.new(0, 365,0, 36), "InOut", "Quint", 0.18, true)
-      key.Text = a.KeyCode.Name
-      oldKey = a.KeyCode.Name;
-     end
+     task.wait(0.15)
+     bindKind, bindName = Luxt1.WaitForBind(KeyBindUIS)
+     keybindFrame:TweenSize(UDim2.new(0, 365,0, 36), "InOut", "Quint", 0.18, true)
+     key.Text = Luxt1.BindDisplay(bindKind, bindName)
     end)
     local keyDebounce = false
     local keyBindApi = {}
@@ -902,9 +950,9 @@ function Luxt1.CreateWindow(libName, logoId)
      linkedToggle = toggleApi
     end
 
-    game:GetService("UserInputService").InputBegan:connect(function(current, ok)
+    KeyBindUIS.InputBegan:connect(function(current, ok)
      if not ok then
-      if current.KeyCode.Name == oldKey then
+      if Luxt1.InputMatchesBind(bindKind, bindName, current) then
        if not keyDebounce then
         keyDebounce = true
         if linkedToggle and linkedToggle.Toggle then
@@ -928,7 +976,9 @@ function Luxt1.CreateWindow(libName, logoId)
 
    function ItemHandling:ToggleKeyBind(toggInfo, first, callback)
     toggInfo = toggInfo or "Toggle"
-    local oldKey = (typeof(first) == "EnumItem" and first.Name) or (first and first.Name) or "R"
+    local bindKind, bindName = Luxt1.BindFromEnum(first)
+    bindKind = bindKind or "Key"
+    bindName = bindName or "R"
     callback = callback or function() end
 
     local ToggleFrame = Instance.new("Frame")
@@ -975,7 +1025,7 @@ function Luxt1.CreateWindow(libName, logoId)
     key.Size = UDim2.new(0, 76, 0, 22)
     key.ZIndex = 2
     key.Font = Enum.Font.GothamSemibold
-    key.Text = oldKey
+    key.Text = Luxt1.BindDisplay(bindKind, bindName)
     key.TextColor3 = T.KeyText
     key.TextSize = 14.000
 
@@ -1017,7 +1067,7 @@ function Luxt1.CreateWindow(libName, logoId)
     local on = false
     local togDe = false
     local keyDebounce = false
-    local UserInputService = game:GetService("UserInputService")
+    local ToggleKeyUIS = game:GetService("UserInputService")
     local keyConn
 
     local function setToggleState(state, fireCallback)
@@ -1063,9 +1113,9 @@ function Luxt1.CreateWindow(libName, logoId)
 
     local function bindKeyListener()
      if keyConn then keyConn:Disconnect() end
-     keyConn = UserInputService.InputBegan:Connect(function(input, processed)
+     keyConn = ToggleKeyUIS.InputBegan:Connect(function(input, processed)
       if processed then return end
-      if input.KeyCode.Name == oldKey and not keyDebounce then
+      if Luxt1.InputMatchesBind(bindKind, bindName, input) and not keyDebounce then
        keyDebounce = true
        toggleApi:Toggle()
        toggleFrame:TweenSize(UDim2.new(0, 359, 0, 30), "InOut", "Quint", 0.18, true)
@@ -1091,12 +1141,10 @@ function Luxt1.CreateWindow(libName, logoId)
 
     key.MouseButton1Click:Connect(function()
      key.Text = ". . ."
-     local input = UserInputService.InputBegan:Wait()
-     if input.KeyCode.Name ~= "Unknown" then
-      oldKey = input.KeyCode.Name
-      key.Text = oldKey
-      bindKeyListener()
-     end
+     task.wait(0.15)
+     bindKind, bindName = Luxt1.WaitForBind(ToggleKeyUIS)
+     key.Text = Luxt1.BindDisplay(bindKind, bindName)
+     bindKeyListener()
     end)
 
     return toggleApi
@@ -1104,7 +1152,9 @@ function Luxt1.CreateWindow(libName, logoId)
 
    function ItemHandling:HoldToggle(toggInfo, first, callback)
     toggInfo = toggInfo or "Hold Toggle"
-    local oldKey = (typeof(first) == "EnumItem" and first.Name) or (first and first.Name) or "LeftShift"
+    local bindKind, bindName = Luxt1.BindFromEnum(first)
+    bindKind = bindKind or "Key"
+    bindName = bindName or "LeftShift"
     callback = callback or function() end
 
     local ToggleFrame = Instance.new("Frame")
@@ -1151,7 +1201,7 @@ function Luxt1.CreateWindow(libName, logoId)
     key.Size = UDim2.new(0, 76, 0, 22)
     key.ZIndex = 2
     key.Font = Enum.Font.GothamSemibold
-    key.Text = oldKey
+    key.Text = Luxt1.BindDisplay(bindKind, bindName)
     key.TextColor3 = T.KeyText
     key.TextSize = 14.000
 
@@ -1193,7 +1243,7 @@ function Luxt1.CreateWindow(libName, logoId)
     local on = false
     local clickLatched = false
     local keyHeld = false
-    local UserInputService = game:GetService("UserInputService")
+    local HoldToggleUIS = game:GetService("UserInputService")
     local holdBeganConn
     local holdEndedConn
 
@@ -1218,16 +1268,16 @@ function Luxt1.CreateWindow(libName, logoId)
     local function bindHoldListeners()
      if holdBeganConn then holdBeganConn:Disconnect() end
      if holdEndedConn then holdEndedConn:Disconnect() end
-     holdBeganConn = UserInputService.InputBegan:Connect(function(input, processed)
+     holdBeganConn = HoldToggleUIS.InputBegan:Connect(function(input, processed)
       if processed then return end
-      if input.KeyCode.Name == oldKey then
+      if Luxt1.InputMatchesBind(bindKind, bindName, input) then
        keyHeld = true
        setToggleState(true, true)
        toggleFrame:TweenSize(UDim2.new(0, 359, 0, 30), "InOut", "Quint", 0.12, true)
       end
      end)
-     holdEndedConn = UserInputService.InputEnded:Connect(function(input)
-      if input.KeyCode.Name == oldKey and keyHeld then
+     holdEndedConn = HoldToggleUIS.InputEnded:Connect(function(input)
+      if Luxt1.InputMatchesBind(bindKind, bindName, input) and keyHeld then
        keyHeld = false
        clickLatched = false
        setToggleState(false, true)
@@ -1269,12 +1319,10 @@ function Luxt1.CreateWindow(libName, logoId)
 
     key.MouseButton1Click:Connect(function()
      key.Text = ". . ."
-     local input = UserInputService.InputBegan:Wait()
-     if input.KeyCode.Name ~= "Unknown" then
-      oldKey = input.KeyCode.Name
-      key.Text = oldKey
-      bindHoldListeners()
-     end
+     task.wait(0.15)
+     bindKind, bindName = Luxt1.WaitForBind(HoldToggleUIS)
+     key.Text = Luxt1.BindDisplay(bindKind, bindName)
+     bindHoldListeners()
     end)
 
     return holdToggleApi
