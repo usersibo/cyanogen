@@ -60,9 +60,11 @@ function Luxt1.GetThemeNames()
 end
 
 local MOUSE_BIND_TYPES = {
- [Enum.UserInputType.MouseButton1] = true,
- [Enum.UserInputType.MouseButton2] = true,
- [Enum.UserInputType.MouseButton3] = true,
+    [Enum.UserInputType.MouseButton1] = true,
+    [Enum.UserInputType.MouseButton2] = true,
+    [Enum.UserInputType.MouseButton3] = true,
+    [Enum.UserInputType.MouseButton4] = true,  
+    [Enum.UserInputType.MouseButton5] = true,  
 }
 
 function Luxt1.BindFromInput(input)
@@ -88,12 +90,14 @@ function Luxt1.BindFromEnum(item)
 end
 
 function Luxt1.BindDisplay(kind, name)
- if kind == "Mouse" then
-  if name == "MouseButton1" then return "M1" end
-  if name == "MouseButton2" then return "M2" end
-  if name == "MouseButton3" then return "M3" end
- end
- return name
+    if kind == "Mouse" then
+        if name == "MouseButton1" then return "M1" end
+        if name == "MouseButton2" then return "M2" end
+        if name == "MouseButton3" then return "M3" end
+        if name == "MouseButton4" then return "M4" end  
+        if name == "MouseButton5" then return "M5" end  
+    end
+    return name
 end
 
 function Luxt1.InputMatchesBind(kind, name, input)
